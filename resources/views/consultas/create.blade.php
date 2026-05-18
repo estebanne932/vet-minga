@@ -1,3 +1,4 @@
+
 <x-app-layout>
     <div class="max-w-5xl mx-auto p-6">
         <h2 class="text-xl font-bold mb-6">Nueva Consulta</h2>
@@ -8,49 +9,58 @@
             {{-- PROPIETARIO --}}
             <h3 class="font-semibold mb-2">Propietario</h3>
 
-            <input type="hidden" name="propietario_id" id="propietario_id">
-
             <div class="relative grid grid-cols-2 gap-4 mb-4">
-                <div class="col-span-2 relative">
-                    <input
-                        id="propietario_nombre"
-                        name="propietario_nombre"
-                        class="input w-full"
-                        placeholder="Nombre del propietario"
-                        autocomplete="off"
-                    >
+                <div class="col-span-2">
+                    <label class="text-sm text-gray-700">Propietario</label>
 
-                    <div
-                        id="propietario-suggestions"
-                        class="absolute bg-white border w-full z-20 hidden"
-                    ></div>
+                    <select
+                        name="propietario_id"
+                        id="propietario_select"
+                        class="input w-full"
+                    >
+                        <option value="">Selecciona un propietario</option>
+
+                        @foreach($propietarios as $propietario)
+                            <option
+                                value="{{ $propietario->id }}"
+                                data-telefono="{{ $propietario->telefono }}"
+                                data-correo="{{ $propietario->correo }}"
+                                data-direccion="{{ $propietario->direccion }}"
+                            >
+                                {{ $propietario->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
 
-                <input name="propietario_telefono" class="input" placeholder="Teléfono">
-                <input name="propietario_correo" class="input" placeholder="Correo">
-                <input name="propietario_direccion" class="input" placeholder="Dirección">
+                <div class="col-span-2">
+                    <label for="telefono" class="text-sm text-gray-700">Teléfono</label>
+                    <input id="telefono" name="propietario_telefono" class="input w-full" type="text">
+
+                    <label for="correo" class="text-sm text-gray-700 mt-2 block">Correo</label>
+                    <input id="correo" name="propietario_correo" class="input w-full" type="text">
+
+                    <label for="direccion" class="text-sm text-gray-700 mt-2 block">Dirección</label>
+                    <input id="direccion" name="propietario_direccion" class="input w-full" type="text">
+                </div>
             </div>
 
 
-            {{-- MASCOTA --}}
-            <h3 class="font-semibold mb-2">Mascota</h3>
 
-            <input type="hidden" name="mascota_id" id="mascota_id">
+           {{-- MASCOTA --}}
+            <h3 class="font-semibold mb-2">Mascota</h3>
 
             <div class="relative grid grid-cols-2 gap-4 mb-4">
                 <div class="col-span-2 relative">
-                    <input
-                        id="mascota_nombre"
-                        name="mascota_nombre"
-                        class="input w-full"
-                        placeholder="Nombre de la mascota"
-                        autocomplete="off"
-                    >
+                    <label class="text-sm text-gray-700">Mascota</label>
 
-                    <div
-                        id="mascota-suggestions"
-                        class="absolute bg-white border w-full z-20 hidden"
-                    ></div>
+                    <select
+                        id="mascota_select"
+                        name="mascota_id"
+                        class="input w-full"
+                    >
+                        <option value="">Selecciona una mascota</option>
+                    </select>
                 </div>
 
                 <div class="col-span-2">
@@ -72,7 +82,6 @@
                     >
                 </div>
 
-
                 <div class="col-span-2 flex items-center gap-3 mt-2">
                     <input
                         type="checkbox"
@@ -86,8 +95,6 @@
                         Mascota esterilizada
                     </label>
                 </div>
-
-
 
                 <input name="mascota_especie" class="input" placeholder="Especie">
                 <input name="mascota_raza" class="input" placeholder="Raza">
@@ -138,35 +145,44 @@
                         @endforeach
                     </div>
                 </div>
-                {{-- EXAMEN FÍSICO CHECK (SI / NO) --}}
-            <h3 class="text-lg font-bold mt-10 mb-4">
-                Examen físico (checklist)
-            </h3>
+             @endforeach
 
-            @php
-                $checks = config('examen_fisico_check');
-            @endphp
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                @foreach ($checks as $key => $label)
-                    <div class="flex items-center justify-between bg-gray-50 border rounded-lg p-4">
-                        <span class="text-sm text-gray-700">
-                            {{ $label }}
-                        </span>
+            @foreach ($checks as $key => $label)
+            <div class="flex items-center justify-between bg-gray-50 border rounded-lg px-4 py-3">
 
-                        <select
-                            name="examen_fisico_check[{{ $key }}]"
-                            class="border-gray-300 rounded text-sm focus:ring-teal-500 focus:border-teal-500"
-                        >
-                            <option value="">—</option>
-                            <option value="1">Sí</option>
-                            <option value="0">No</option>
-                        </select>
-                    </div>
-                @endforeach
+                <span class="text-sm text-gray-700">
+                    {{ $label }}
+                </span>
+
+                <div class="flex bg-gray-200 rounded-lg p-1">
+
+                    <!-- NO -->
+                    <button type="button"
+                        onclick="setCheck('{{ $key }}', 0)"
+                        id="btn-no-{{ $key }}"
+                        class="px-3 py-1 text-sm rounded-md text-gray-600">
+                        No
+                    </button>
+
+                    <!-- SI -->
+                    <button type="button"
+                        onclick="setCheck('{{ $key }}', 1)"
+                        id="btn-si-{{ $key }}"
+                        class="px-3 py-1 text-sm rounded-md text-gray-600">
+                        Sí
+                    </button>
+
+                </div>
+
+                <input type="hidden" name="examen_fisico_check[{{ $key }}]" id="input-{{ $key }}">
+
             </div>
+            @endforeach
 
-        @endforeach
+        </div>
+
 
         {{-- DIAGNÓSTICO --}}
         <h3 class="text-lg font-bold mt-10 mb-4">Diagnóstico</h3>
@@ -248,11 +264,7 @@
 
                 <input type="hidden" name="firma" id="firma">
 
-                <button
-                    type="button"
-                    onclick="clearSignature()"
-                    class="mt-2 text-sm text-gray-600 underline"
-                >
+                <button type="button" onclick="clearSignature()" class="mt-2 text-sm text-gray-600 underline">
                     Limpiar firma
                 </button>
             </div>
@@ -263,155 +275,245 @@
             </button>
         </form>
         <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.5/dist/signature_pad.umd.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.5/dist/signature_pad.umd.min.js"></script>
 
-    <script>
+        <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const propietarioSelect = document.getElementById('propietario_select');
+
+            if (propietarioSelect) {
+                propietarioSelect.addEventListener('change', function () {
+                    const option = this.options[this.selectedIndex];
+                    document.getElementById('telefono').value = option?.dataset.telefono || '';
+                    document.getElementById('correo').value = option?.dataset.correo || '';
+                    document.getElementById('direccion').value = option?.dataset.direccion || '';
+                });
+            }
+
             const canvas = document.getElementById('signature-pad');
-            const signaturePad = new SignaturePad(canvas);
+            let signaturePad = null;
 
-            function resizeCanvas() {
-                const ratio = Math.max(window.devicePixelRatio || 1, 1);
-                canvas.width = canvas.offsetWidth * ratio;
-                canvas.height = canvas.offsetHeight * ratio;
-                canvas.getContext('2d').scale(ratio, ratio);
+            if (canvas && typeof SignaturePad !== 'undefined') {
+                signaturePad = new SignaturePad(canvas);
+
+                function resizeCanvas() {
+                    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                    canvas.width = canvas.offsetWidth * ratio;
+                    canvas.height = canvas.offsetHeight * ratio;
+                    canvas.getContext('2d').scale(ratio, ratio);
+                }
+
+                window.addEventListener('resize', resizeCanvas);
+                resizeCanvas();
+
+                window.clearSignature = function () {
+                    signaturePad.clear();
+                };
             }
 
-            window.addEventListener('resize', resizeCanvas);
-            resizeCanvas();
-
-            function clearSignature() {
-                signaturePad.clear();
-            }
-
-            document
-                .getElementById('consulta-form')
-                .addEventListener('submit', function () {
-
+            const form = document.getElementById('consulta-form');
+            if (form && signaturePad) {
+                form.addEventListener('submit', function () {
                     if (!signaturePad.isEmpty()) {
-                        document.getElementById('firma').value =
-                            signaturePad.toDataURL('image/png');
+                        document.getElementById('firma').value = signaturePad.toDataURL('image/png');
                     }
                 });
-
-
-            /* ===============================
-        PROPIETARIOS
-        ================================ */
-        const propietarioInput = document.getElementById('propietario_nombre');
-        const propietarioIdInput = document.getElementById('propietario_id');
-        const propietarioBox = document.getElementById('propietario-suggestions');
-
-        propietarioInput.addEventListener('input', async function () {
-            const q = this.value;
-            propietarioIdInput.value = '';
-
-            if (q.length < 2) {
-                propietarioBox.classList.add('hidden');
-                return;
             }
 
-            const res = await fetch(`/buscar/propietarios?q=${q}`);
-            const data = await res.json();
+            let medicamentoIndex = 1;
 
-            propietarioBox.innerHTML = '';
-            propietarioBox.classList.remove('hidden');
+            window.agregarMedicamento = function () {
+                const container = document.getElementById('medicamentos-container');
+                if (!container) return;
 
-            data.forEach(p => {
                 const div = document.createElement('div');
-                div.className = 'p-2 hover:bg-gray-100 cursor-pointer';
-                div.textContent = p.nombre;
+                div.className = 'grid grid-cols-1 md:grid-cols-4 gap-4 medicamento-item';
 
-                div.onclick = () => {
-                    propietarioInput.value = p.nombre;
-                    propietarioIdInput.value = p.id;
+                div.innerHTML = `
+                    <input name="medicamentos[${medicamentoIndex}][medicamento]" class="input" placeholder="Medicamento">
+                    <input name="medicamentos[${medicamentoIndex}][dosis]" class="input" placeholder="Dosis">
+                    <input name="medicamentos[${medicamentoIndex}][frecuencia]" class="input" placeholder="Frecuencia">
+                    <input name="medicamentos[${medicamentoIndex}][periodo]" class="input" placeholder="Periodo">
+                `;
 
-                    document.querySelector('[name=propietario_telefono]').value = p.telefono ?? '';
-                    document.querySelector('[name=propietario_correo]').value = p.correo ?? '';
-                    document.querySelector('[name=propietario_direccion]').value = p.direccion ?? '';
-
-                    propietarioBox.classList.add('hidden');
-                };
-
-                propietarioBox.appendChild(div);
-            });
+                container.appendChild(div);
+                medicamentoIndex++;
+            };
         });
+        function setCheck(key, value) {
+            const input = document.getElementById('input-' + key);
+            const btnNo = document.getElementById('btn-no-' + key);
+            const btnSi = document.getElementById('btn-si-' + key);
 
-        /* ===============================
-        MASCOTAS
-        ================================ */
-        const mascotaInput = document.getElementById('mascota_nombre');
-        const mascotaIdInput = document.getElementById('mascota_id');
-        const mascotaBox = document.getElementById('mascota-suggestions');
+            if (!input || !btnNo || !btnSi) return;
 
-        mascotaInput.addEventListener('input', async function () {
-            const q = this.value;
-            mascotaIdInput.value = '';
+            input.value = value;
 
-            const propietarioId = propietarioIdInput.value;
-            if (!propietarioId || q.length < 2) {
-                mascotaBox.classList.add('hidden');
-                return;
+            btnNo.classList.remove('bg-red-500', 'text-white');
+            btnSi.classList.remove('bg-teal-600', 'text-white');
+
+            if (value == 0) {
+                btnNo.classList.add('bg-red-500', 'text-white');
+            } else {
+                btnSi.classList.add('bg-teal-600', 'text-white');
             }
-
-            const res = await fetch(`/buscar/mascotas?q=${q}&propietario_id=${propietarioId}`);
-            const data = await res.json();
-
-            mascotaBox.innerHTML = '';
-            mascotaBox.classList.remove('hidden');
-
-            data.forEach(m => {
-                const div = document.createElement('div');
-                div.className = 'p-2 hover:bg-gray-100 cursor-pointer';
-                div.textContent = m.nombre;
-
-               div.onclick = () => {
-                    mascotaInput.value = m.nombre;
-                    mascotaIdInput.value = m.id;
-
-                    document.querySelector('[name=mascota_especie]').value = m.especie ?? '';
-                    document.querySelector('[name=mascota_raza]').value = m.raza ?? '';
-                    document.querySelector('[name=mascota_edad]').value = m.edad ?? '';
-                    document.querySelector('[name=mascota_peso]').value = m.peso ?? '';
-
-                    document.getElementById('mascota_esterilizado').checked = Boolean(m.esterilizado);
-
-                    const preview = document.getElementById('mascota-preview');
-                    if (m.imagen) {
-                        preview.src = `/storage/${m.imagen}`;
-                        preview.classList.remove('hidden');
-                    } else {
-                        preview.classList.add('hidden');
-                    }
-
-                    mascotaBox.classList.add('hidden');
-                };
-
-
-
-                mascotaBox.appendChild(div);
-            });
-        });
-
-
-        let medicamentoIndex = 1;
-
-        function agregarMedicamento() {
-            const container = document.getElementById('medicamentos-container');
-
-            const div = document.createElement('div');
-            div.className = 'grid grid-cols-1 md:grid-cols-4 gap-4 medicamento-item';
-
-            div.innerHTML = `
-                <input name="medicamentos[${medicamentoIndex}][medicamento]" class="input" placeholder="Medicamento">
-                <input name="medicamentos[${medicamentoIndex}][dosis]" class="input" placeholder="Dosis">
-                <input name="medicamentos[${medicamentoIndex}][frecuencia]" class="input" placeholder="Frecuencia">
-                <input name="medicamentos[${medicamentoIndex}][periodo]" class="input" placeholder="Periodo">
-            `;
-
-            container.appendChild(div);
-            medicamentoIndex++;
         }
-        </script>
 
+        document.addEventListener('DOMContentLoaded', function () {
+
+    const propietarioSelect = document.getElementById('propietario_select');
+    const mascotaSelect = document.getElementById('mascota_select');
+
+    // =========================================
+    // CARGAR MASCOTAS DEL PROPIETARIO
+    // =========================================
+    if (propietarioSelect && mascotaSelect) {
+
+        propietarioSelect.addEventListener('change', async function () {
+
+            const option = this.options[this.selectedIndex];
+
+            // DATOS DEL PROPIETARIO
+            document.getElementById('telefono').value =
+                option?.dataset.telefono || '';
+
+            document.getElementById('correo').value =
+                option?.dataset.correo || '';
+
+            document.getElementById('direccion').value =
+                option?.dataset.direccion || '';
+
+            // LIMPIAR SELECT
+            mascotaSelect.innerHTML =
+                '<option value="">Cargando mascotas...</option>';
+
+            // SI NO HAY PROPIETARIO
+            if (!this.value) {
+
+                mascotaSelect.innerHTML =
+                    '<option value="">Selecciona una mascota</option>';
+
+                limpiarDatosMascota();
+
+                return;
+            }
+
+            try {
+
+                const res =
+                    await fetch(`/propietarios/${this.value}/mascotas`);
+
+                const mascotas = await res.json();
+
+                mascotaSelect.innerHTML =
+                    '<option value="">Selecciona una mascota</option>';
+
+                mascotas.forEach(mascota => {
+
+                    const opt = document.createElement('option');
+
+                    opt.value = mascota.id;
+                    opt.textContent = mascota.nombre;
+
+                    opt.dataset.especie =
+                        mascota.especie || '';
+
+                    opt.dataset.raza =
+                        mascota.raza || '';
+
+                    opt.dataset.edad =
+                        mascota.edad || '';
+
+                    opt.dataset.peso =
+                        mascota.peso || '';
+
+                    opt.dataset.esterilizado =
+                        mascota.esterilizado ? 1 : 0;
+
+                    opt.dataset.imagen =
+                        mascota.imagen || '';
+
+                    mascotaSelect.appendChild(opt);
+                });
+
+            } catch (error) {
+
+                console.error(error);
+
+                mascotaSelect.innerHTML =
+                    '<option value="">Error al cargar mascotas</option>';
+            }
+        });
+    }
+
+    // =========================================
+    // AUTOLLENAR DATOS DE MASCOTA
+    // =========================================
+    if (mascotaSelect) {
+
+        mascotaSelect.addEventListener('change', function () {
+
+            const option = this.options[this.selectedIndex];
+
+            document.querySelector('[name=mascota_especie]').value =
+                option?.dataset.especie || '';
+
+            document.querySelector('[name=mascota_raza]').value =
+                option?.dataset.raza || '';
+
+            document.querySelector('[name=mascota_edad]').value =
+                option?.dataset.edad || '';
+
+            document.querySelector('[name=mascota_peso]').value =
+                option?.dataset.peso || '';
+
+            document.getElementById('mascota_esterilizado').checked =
+                option?.dataset.esterilizado == 1;
+
+            const preview =
+                document.getElementById('mascota-preview');
+
+            if (option?.dataset.imagen) {
+
+                preview.src =
+                    `/storage/${option.dataset.imagen}`;
+
+                preview.classList.remove('hidden');
+
+            } else {
+
+                preview.src = '';
+
+                preview.classList.add('hidden');
+            }
+        });
+    }
+
+    // =========================================
+    // LIMPIAR DATOS
+    // =========================================
+    function limpiarDatosMascota() {
+
+        document.querySelector('[name=mascota_especie]').value = '';
+
+        document.querySelector('[name=mascota_raza]').value = '';
+
+        document.querySelector('[name=mascota_edad]').value = '';
+
+        document.querySelector('[name=mascota_peso]').value = '';
+
+        document.getElementById('mascota_esterilizado').checked = false;
+
+        const preview =
+            document.getElementById('mascota-preview');
+
+        preview.src = '';
+
+        preview.classList.add('hidden');
+    }
+
+});
+        </script>
 
     </div>
 </x-app-layout>

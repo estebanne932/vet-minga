@@ -6,21 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-   public function up()
+    public function up(): void
     {
         Schema::table('consultas', function (Blueprint $table) {
-            $table->string('estatus')->default('abierta');
+            $table->string('expediente_num')
+                ->unique()
+                ->after('veterinario');
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::table('consultas', function (Blueprint $table) {
-            $table->dropColumn('estatus');
+            $table->dropColumn('expediente_num');
         });
     }
-
 };

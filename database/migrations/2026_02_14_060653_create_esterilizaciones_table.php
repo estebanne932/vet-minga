@@ -31,6 +31,7 @@ return new class extends Migration
             $table->text('observaciones')->nullable();
 
             $table->boolean('consentimiento_firmado')->default(false);
+            
 
             $table->timestamps();
         });

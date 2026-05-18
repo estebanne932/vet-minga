@@ -92,6 +92,10 @@
                                 >
                                     Ver
                                 </a>
+                                <a href="{{ route('consultas.edit', $consulta) }}"
+                                class="text-blue-600 hover:underline">
+                                    Editar
+                                </a>
 
                                 <form
                                     action="{{ route('consultas.destroy', $consulta) }}"

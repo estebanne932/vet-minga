@@ -13,7 +13,7 @@
         </p>
     </div>
 
-    <form action="{{ route('esterilizaciones.store') }}" method="POST" class="p-8 space-y-6">
+    <form id="formEsterilizacion" action="{{ route('esterilizaciones.store') }}" method="POST" class="p-8 space-y-6">
         @csrf
 
         <input type="hidden" name="mascota_id" value="{{ $mascota->id }}">
@@ -37,8 +37,34 @@
             </p>
 
             <p class="text-gray-600 text-sm mt-2">
-                Declaro que mi mascota se encuentra en aparente buen estado de salud y que he sido informado(a) de los riesgos asociados al uso de anestesia general y procedimiento quirúrgico.
+                Los dueños responsables evitan así el nacimiento de mascotas que tienen como destino deambular en la vía pública, además de sufrir hambre y malos tratos, además de representar riesgo a la salud pública por las agresiones que puedan ocasionar y la posible trasmisión de rabia. 
             </p>
+
+            <p class="text-gray-600 text-sm mt-2">
+                La esterilización de las hembras (OVH) consiste en retirar los dos ovarios y cuernos uterinos y en los machos se retiran los testículos, con lo cual ya no presentan celo. 
+            </p>
+
+            <p class="text-gray-600 text-sm mt-2">  
+                El uso de anestesia general y procedimiento quirúrgico implica un riesgo, por lo cual la cirugía de esterilización se realiza a pacientes sanos, en esta campaña no se realizan exámenes preoperatorios, por lo que si su mascota presenta algún signo de enfermedad o sospecha que está embarazada notifíquelo al veterinario responsable del programa. 
+            </p>
+
+            <p class="text-gray-600 text-sm mt-2">
+                Dando por hecho que se presenta a la mascota sana, se exime de toda responsabilidad a los médicos que realizan la cirugía. Por lo anterior y una vez informado (a) autorizo que mi mascota sea sometida a cirugía de esterilización.
+            </p>
+
+            <br>
+            <h1>Riesgos de la cirugia</h1>
+
+            <ul>
+                <li>1.- En el Quirófano Móvil no se realizan pre anestésico ni médicos, como exámenes sanguíneos, cardiacos, hepáticos, renales, temperatura, etc; por lo cual no podemos tener conocimientos de la salud del paciente. Por ello el uso de anestésicos y demás medicamentos queda bajo autorización del propietario. </li>
+                <li>2.- El uso de cualquier anestésico o medicamente implica un riesgo, y no sabemos cómo pueda reaccionar el organismo. </li>
+                <li>3.- No se realizará cirugía a pacientes que hayan ingerido agua o alimento dentro de las 10 horas anteriores a la cirugía. </li>
+                <li>4.- El no comentar al médico sobre la ingesta queda bajo la responsabilidad del propietario. </li>
+                <li>5.- La cirugía es a partir de los 6 meses de edad no antes. </li>
+                <li>6.- No se realizará cirugía a hembras gestantes ni lactantes. Ni a hembras ni machos en celo. </li>
+                <li>7.- El éxito de la cirugía dependerá de los cuidados postoperatorios (estos corresponden a los propietarios) </li>
+            </ul>
+
         </div>
 
         <!-- DATOS DE LA CIRUGÍA -->
@@ -54,7 +80,7 @@
                         Veterinario
                     </label>
                     <input type="text" name="veterinario"
-                        value="{{ old('veterinario') }}"
+                        value="Valeria Mingura Gamboa"
                         class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
 
@@ -110,7 +136,8 @@
         <canvas id="firmaCanvas" width="500" height="200"></canvas>
     </div>
 
-    <input type="hidden" name="firma" id="firma">
+  
+    <input type="hidden" name="consentimiento_firmado" id="firma">
 
     <div class="mt-3">
         <button type="button"
@@ -137,25 +164,34 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 <script>
+document.addEventListener('DOMContentLoaded', function () {
 
-const canvas = document.getElementById('firmaCanvas');
-const signaturePad = new SignaturePad(canvas);
+    const canvas = document.getElementById('firmaCanvas');
+    const signaturePad = new SignaturePad(canvas);
 
-const form = document.querySelector('form');
-const firmaInput = document.getElementById('firma');
+    const form = document.getElementById('formEsterilizacion');
+    const firmaInput = document.getElementById('firma');
 
-form.addEventListener('submit', function () {
+    form.addEventListener('submit', function (e) {
 
-    if (!signaturePad.isEmpty()) {
-        firmaInput.value = signaturePad.toDataURL();
-    }
+        if (signaturePad.isEmpty()) {
+            alert('Debes firmar antes de guardar');
+            e.preventDefault();
+            return;
+        }
+
+        const firmaData = signaturePad.toDataURL();
+
+        console.log('FIRMA:', firmaData); // 👈 ahora sí debe aparecer
+
+        firmaInput.value = firmaData;
+    });
+
+    document.getElementById('limpiarFirma').addEventListener('click', function () {
+        signaturePad.clear();
+    });
 
 });
-
-document.getElementById('limpiarFirma').addEventListener('click', function () {
-    signaturePad.clear();
-});
-
 </script>
 
 </x-app-layout>

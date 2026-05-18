@@ -18,8 +18,13 @@ class ConsultaController extends Controller
 {
     public function create()
     {
-        return view('consultas.create');
+        return view('consultas.create', [
+            'examen' => config('examen_fisico'),
+            'checks' => config('examen_fisico_check'),
+            'propietarios' => Propietario::orderBy('nombre')->get(),
+        ]);
     }
+        
 
     public function index()
     {
@@ -29,6 +34,7 @@ class ConsultaController extends Controller
             ])
             ->orderBy('fecha', 'desc')
             ->paginate(10);
+            
 
         return view('consultas.index', compact('consultas'));
     }
@@ -79,6 +85,7 @@ class ConsultaController extends Controller
 
     public function store(Request $request)
     {
+        
     
         DB::transaction(function () use ($request) {
 
@@ -86,18 +93,14 @@ class ConsultaController extends Controller
             * 1️⃣ PROPIETARIO (CREATE / UPDATE)
             * ========================== */
             if ($request->propietario_id) {
-
                 $propietario = Propietario::findOrFail($request->propietario_id);
 
                 $propietario->update([
-                    'nombre'    => $request->propietario_nombre,
                     'telefono'  => $request->propietario_telefono,
                     'correo'    => $request->propietario_correo,
                     'direccion' => $request->propietario_direccion,
                 ]);
-
             } else {
-
                 $propietario = Propietario::create([
                     'nombre'    => $request->propietario_nombre,
                     'telefono'  => $request->propietario_telefono,
@@ -130,7 +133,6 @@ class ConsultaController extends Controller
         }
 
         $mascota->update([
-            'nombre'  => $request->mascota_nombre,
             'especie' => $request->mascota_especie,
             'raza'    => $request->mascota_raza,
             'edad'    => (int) $request->mascota_edad,
@@ -300,6 +302,123 @@ class ConsultaController extends Controller
         return redirect()
             ->route('consultas.index')
             ->with('success', 'Consulta registrada correctamente');
+    }
+
+    public function edit(Consulta $consulta)
+    {
+        $consulta->load([
+            'propietario',
+            'mascota',
+            'examenFisico',
+            'examenFisicoCheck',
+            'diagnostico',
+            'medicamentosAplicados'
+        ]);
+
+        return view('consultas.edit', compact('consulta'));
+    }
+
+    public function update(Request $request, Consulta $consulta)
+    {
+        DB::transaction(function () use ($request, $consulta) {
+
+            // 🧍‍♂️ PROPIETARIO
+            $propietario = $consulta->propietario;
+
+            $propietario->update([
+                'nombre'    => $request->propietario_nombre,
+                'telefono'  => $request->propietario_telefono,
+                'correo'    => $request->propietario_correo,
+                'direccion' => $request->propietario_direccion,
+            ]);
+
+            // 🐶 MASCOTA
+            $mascota = $consulta->mascota;
+
+            $imagenPath = $mascota->imagen;
+
+            if ($request->hasFile('mascota_imagen')) {
+
+                if ($mascota->imagen && Storage::disk('public')->exists($mascota->imagen)) {
+                    Storage::disk('public')->delete($mascota->imagen);
+                }
+
+                $imagenPath = $request->file('mascota_imagen')->store('mascotas', 'public');
+            }
+
+            $mascota->update([
+                'nombre'       => $request->mascota_nombre,
+                'especie'      => $request->mascota_especie,
+                'raza'         => $request->mascota_raza,
+                'edad'         => (int) $request->mascota_edad,
+                'peso'         => $request->mascota_peso,
+                'imagen'       => $imagenPath,
+                'esterilizado' => $request->boolean('mascota_esterilizado'),
+            ]);
+
+      
+    
+
+            // 📋 CONSULTA
+            $consulta->update([
+                'fecha'       => $request->fecha,
+                'motivo'      => $request->motivo,
+                'veterinario' => $request->veterinario,
+            ]);
+
+            // 🧹 BORRAR RELACIONES
+            $consulta->examenFisico()->delete();
+            $consulta->examenFisicoCheck()->delete();
+            $consulta->diagnostico()->delete();
+            $consulta->medicamentosAplicados()->delete();
+
+            // 🩺 EXAMEN FÍSICO
+            foreach ($request->examen_fisico ?? [] as $punto => $respuesta) {
+
+                if (trim($respuesta) === '') continue;
+
+                ExamenFisico::create([
+                    'consulta_id' => $consulta->id,
+                    'punto'       => $punto,
+                    'respuesta'   => $respuesta,
+                ]);
+            }
+
+            // ✅ CHECK
+            foreach ($request->examen_fisico_check ?? [] as $punto => $valor) {
+
+                ExamenFisicoCheck::create([
+                    'consulta_id' => $consulta->id,
+                    'punto'       => $punto,
+                    'respuesta'   => (bool) $valor,
+                ]);
+            }
+
+            // 🧠 DIAGNÓSTICO
+            Diagnostico::create([
+                'consulta_id' => $consulta->id,
+                'diagnosticos_diferenciales' => $request->diagnosticos_diferenciales,
+                'diagnostico_definitivo'     => $request->diagnostico_definitivo,
+            ]);
+
+            // 💊 MEDICAMENTOS
+            foreach ($request->medicamentos ?? [] as $med) {
+
+                if (empty($med['medicamento'])) continue;
+
+                MedicamentoAplicado::create([
+                    'consulta_id' => $consulta->id,
+                    'medicamento' => $med['medicamento'],
+                    'dosis'       => $med['dosis'] ?? null,
+                    'frecuencia'  => $med['frecuencia'] ?? null,
+                    'periodo'     => $med['periodo'] ?? null,
+                ]);
+            }
+        });
+
+        return redirect()
+            ->route('consultas.show', $consulta)
+            ->with('success', 'Consulta actualizada correctamente');
     }
 
 }

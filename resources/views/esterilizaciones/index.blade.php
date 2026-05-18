@@ -63,18 +63,13 @@
                             <td class="px-4 py-3 text-right space-x-2">
 
                                 <a
-                                    href=""
+                                    href="{{ route('esterilizaciones.show', $esterilizacion) }}"
                                     class="text-teal-600 hover:underline"
                                 >
                                     Ver
                                 </a>
 
-                                <form
-                                    action=""
-                                    method="POST"
-                                    class="inline"
-                                    onsubmit="return confirm('¿Seguro que deseas eliminar esta carta?')"
-                                >
+                                <form action="{{ route('esterilizaciones.destroy', $esterilizacion->id) }}" method="POST" onsubmit="return confirm('¿Eliminar registro?')">
                                     @csrf
                                     @method('DELETE')
 

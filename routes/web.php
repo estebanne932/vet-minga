@@ -40,18 +40,13 @@ Route::get('/buscar/propietarios', [BusquedaController::class, 'propietarios']);
 Route::get('/buscar/mascotas', [BusquedaController::class, 'mascotas']);
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/consultas', [ConsultaController::class, 'index'])
-        ->name('consultas.index');
+
+    Route::resource('consultas', ConsultaController::class);
+
+    Route::patch('/consultas/{consulta}/estatus', [ConsultaController::class, 'updateEstatus'])
+        ->name('consultas.estatus');
+
 });
-
-Route::patch('/consultas/{consulta}/estatus', [ConsultaController::class, 'updateEstatus'])
-    ->name('consultas.estatus');
-
-Route::get('/consultas/{consulta}', [ConsultaController::class, 'show'])
-    ->name('consultas.show');
-
-Route::delete('/consultas/{consulta}', [ConsultaController::class, 'destroy'])
-    ->name('consultas.destroy');
 
 
 use App\Http\Controllers\BiometriaHematicaController;
@@ -130,9 +125,24 @@ Route::delete('/esterilizaciones/{esterilizacion}', [EsterilizacionController::c
 Route::get('/esterilizaciones/buscar', [EsterilizacionController::class, 'buscar'])
     ->name('esterilizaciones.buscar');
 
-    Route::get('/esterilizaciones/mascotas/{propietario}', [EsterilizacionController::class, 'mascotas'])
+Route::get('/esterilizaciones/mascotas/{propietario}', [EsterilizacionController::class, 'mascotas'])
     ->name('esterilizaciones.mascotas');
+
+Route::get('/esterilizaciones/{esterilizacion}', [EsterilizacionController::class, 'show'])
+    ->name('esterilizaciones.show');
 
 
 Route::get('/esterilizaciones/create/{mascota}', [EsterilizacionController::class, 'form'])
     ->name('esterilizaciones.form');
+
+use App\Http\Controllers\PacienteController;
+
+Route::resource('pacientes', PacienteController::class);
+
+use App\Models\Mascota;
+
+Route::get('/propietarios/{id}/mascotas', function ($id) {
+    return response()->json(
+        Mascota::where('propietario_id', $id)->get()
+    );
+});
