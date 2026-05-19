@@ -216,7 +216,7 @@
             <div class="bg-white rounded-xl shadow p-6">
                 <h3 class="font-semibold text-gray-700 mb-4">Medicamentos</h3>
 
-                <div class="space-y-3">
+                <div id="medicamentos-container" class="space-y-3">
                     @foreach($consulta->medicamentosAplicados as $i => $med)
                         <div class="grid grid-cols-4 gap-3">
                             <input name="medicamentos[{{ $i }}][medicamento]" value="{{ $med->medicamento }}" class="input">
@@ -226,6 +226,14 @@
                         </div>
                     @endforeach
                 </div>
+                 <button
+                        type="button"
+                        onclick="agregarMedicamento()"
+                        class="text-sm text-teal-600 underline"
+                    >
+                        + Agregar otro medicamento
+                    </button>
+
             </div>
 
             {{-- ✍️ FIRMA --}}
@@ -248,5 +256,52 @@
             </div>
 
         </form>
+
+   <script>
+    let medicamentoIndex = {{ $consulta->medicamentosAplicados->count() }};
+
+    window.agregarMedicamento = function () {
+
+        const container =
+            document.getElementById('medicamentos-container');
+
+        if (!container) return;
+
+        const div = document.createElement('div');
+
+        div.className =
+            'grid grid-cols-1 md:grid-cols-4 gap-4 medicamento-item mt-3';
+
+        div.innerHTML = `
+            <input
+                name="medicamentos[${medicamentoIndex}][medicamento]"
+                class="input"
+                placeholder="Medicamento"
+            >
+
+            <input
+                name="medicamentos[${medicamentoIndex}][dosis]"
+                class="input"
+                placeholder="Dosis"
+            >
+
+            <input
+                name="medicamentos[${medicamentoIndex}][frecuencia]"
+                class="input"
+                placeholder="Frecuencia"
+            >
+
+            <input
+                name="medicamentos[${medicamentoIndex}][periodo]"
+                class="input"
+                placeholder="Periodo"
+            >
+        `;
+
+        container.appendChild(div);
+
+        medicamentoIndex++;
+    };
+</script>
     </div>
 </x-app-layout>
