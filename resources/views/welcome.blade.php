@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Veterinaria ERP</title>
+    <title>Minga Clínica Veterinaria</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -12,175 +13,140 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        body{
+        body {
             font-family: 'Inter', sans-serif;
         }
     </style>
 </head>
 
-    <body class="bg-[#071018] text-white overflow-hidden">
+<body class="relative bg-[#f5f7fb] text-gray-800 overflow-x-hidden overflow-y-auto">
 
-        {{-- Background --}}
-        <div class="absolute inset-0">
-            <div class="absolute top-0 left-0 w-[500px] h-[500px] bg-cyan-500/20 blur-3xl rounded-full"></div>
-            <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-600/20 blur-3xl rounded-full"></div>
-        </div>
+    {{-- Background --}}
+    <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div class="absolute top-[-150px] left-[-100px] w-[500px] h-[500px] bg-[#7b3b7f]/20 blur-3xl rounded-full"></div>
+        <div class="absolute bottom-[-200px] right-[-100px] w-[500px] h-[500px] bg-[#008b8f]/20 blur-3xl rounded-full"></div>
+    </div>
 
-        {{-- Navbar --}}
-        <header class="relative z-10 border-b border-white/10 backdrop-blur-xl">
-            <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+    {{-- Navbar --}}
+    <header class="relative z-20">
+        <div class="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
 
-                <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-2xl bg-cyan-500 flex items-center justify-center text-2xl shadow-lg shadow-cyan-500/30">
-                        🐾
-                    </div>
+            <div class="flex items-center gap-4">
+               <img
+                                    src="{{ asset('images/logo.png') }}"
+                                    alt="Logo"
+                                    class="h-9 w-auto"
+                                >
 
-                    <div>
-                        <h1 class="font-bold text-xl">VetERP</h1>
-                        <p class="text-xs text-gray-400">Sistema Veterinario</p>
-                    </div>
+                <div>
+                    <h1 class="text-2xl font-extrabold text-[#1f2937] leading-none">MINGA</h1>
+                    <p class="text-sm text-gray-500 tracking-wide">Clínica Veterinaria</p>
                 </div>
+            </div>
 
-                @if (Route::has('login'))
-                    <nav class="flex items-center gap-4">
-                        @auth
-                            <a href="{{ url('/dashboard') }}"
-                            class="px-5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 transition font-medium">
-                                Dashboard
-                            </a>
-                        @else
-                            <a href="{{ route('login') }}"
-                            class="text-gray-300 hover:text-white transition">
-                                Iniciar sesión
-                            </a>
-                        @endauth
-                    </nav>
-                @endif
+            @if (Route::has('login'))
+                @auth
+                    <a href="{{ url('/dashboard') }}"
+                       class="px-6 py-3 rounded-2xl bg-[#008b8f] hover:bg-[#007378] text-white font-semibold transition shadow-xl shadow-cyan-500/20">
+                        Dashboard
+                    </a>
+                @else
+                    <a href="{{ route('login') }}"
+                       class="px-6 py-3 rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-xl hover:bg-white transition font-semibold text-gray-700">
+                        Iniciar sesión
+                    </a>
+                @endauth
+            @endif
+
+        </div>
+    </header>
+
+    {{-- Hero --}}
+    <main class="relative z-10 min-h-screen">
+        <section class="max-w-7xl mx-auto px-6 py-10 lg:py-16 grid lg:grid-cols-2 gap-16 items-center">
+
+            {{-- Left --}}
+            <div>
+
+                <h1 class="text-5xl lg:text-7xl font-extrabold leading-tight text-gray-900">
+                    Cuidando mascotas
+                    con una gestión
+                    <span class="text-[#008b8f]">inteligente</span>
+                </h1>
+
+                <p class="mt-8 text-xl text-gray-600 leading-relaxed max-w-2xl">
+                    Administra consultas, expedientes, vacunas, tratamientos y hospitalización desde un solo lugar,
+                    con una experiencia moderna y eficiente.
+                </p>
+
+                <div class="flex flex-wrap gap-4 mt-10">
+                    <a href="{{ route('login') }}"
+                       class="px-8 py-4 rounded-2xl bg-[#008b8f] hover:bg-[#007378] text-white font-semibold text-lg transition shadow-2xl shadow-cyan-500/20">
+                        Entrar al sistema
+                    </a>
+
+                    <button
+                        class="px-8 py-4 rounded-2xl bg-white/80 backdrop-blur-xl border border-gray-200 hover:bg-white transition text-lg font-medium">
+                        Ver información
+                    </button>
+                </div>
 
             </div>
-        </header>
 
-        {{-- Hero --}}
-        <section class="relative z-10 min-h-[85vh] flex items-center">
+            {{-- Right --}}
+            <div class="relative flex justify-center pb-8 lg:pb-0">
 
-            <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+                <div class="absolute w-[450px] h-[450px] bg-[#008b8f]/20 blur-3xl rounded-full"></div>
 
-                {{-- Left --}}
-                <div>
+                <div class="relative bg-white/70 backdrop-blur-2xl border border-white/50 rounded-[40px] p-10 shadow-2xl max-w-lg w-full">
 
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-400/20 text-cyan-300 text-sm mb-6">
-                        ✨ ERP profesional para clínicas veterinarias
-                    </div>
-
-                    <h1 class="text-6xl font-extrabold leading-tight mb-6">
-                        Administra tu
-                        <span class="text-cyan-400">
-                            veterinaria
-                        </span>
-                        de forma inteligente
-                    </h1>
-
-                    <p class="text-gray-400 text-lg leading-relaxed mb-8 max-w-xl">
-                        Gestiona pacientes, consultas, vacunas, inventario,
-                        hospitalización y reportes desde un solo sistema moderno.
-                    </p>
-
-                    <div class="flex gap-4">
-                        <a href="{{ route('login') }}"
-                        class="px-7 py-4 rounded-2xl bg-cyan-500 hover:bg-cyan-400 transition font-semibold shadow-2xl shadow-cyan-500/30">
-                            Entrar al sistema
-                        </a>
-
-                        <button class="px-7 py-4 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 transition">
-                            Ver demo
-                        </button>
-                    </div>
-
-                    {{-- Stats --}}
-                    <div class="grid grid-cols-3 gap-4 mt-12">
-
-                        <div class="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-xl">
-                            <h3 class="text-3xl font-bold">+3K</h3>
-                            <p class="text-gray-400 text-sm">Pacientes</p>
+                    <div class="flex items-center justify-between mb-10">
+                        <div>
+                            <p class="text-gray-500">Bienvenido a</p>
+                            <h2 class="text-3xl font-extrabold text-gray-900">MINGA</h2>
                         </div>
 
-                        <div class="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-xl">
-                            <h3 class="text-3xl font-bold">98%</h3>
-                            <p class="text-gray-400 text-sm">Eficiencia</p>
+                        <div class="w-16 h-16 rounded-3xl bg-gradient-to-br from-[#008b8f] to-[#34527a] flex items-center justify-center text-3xl shadow-xl text-white">
+                            🐶
                         </div>
-
-                        <div class="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-xl">
-                            <h3 class="text-3xl font-bold">24/7</h3>
-                            <p class="text-gray-400 text-sm">Acceso</p>
-                        </div>
-
                     </div>
 
+                    <div class="space-y-5">
+                        <div class="bg-[#f5f7fb] rounded-3xl p-5 border border-gray-100">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-gray-500 text-sm">Consultas del día</p>
+                                    <h3 class="text-3xl font-bold mt-1">18</h3>
+                                </div>
+                                <div class="text-4xl">🩺</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-[#f5f7fb] rounded-3xl p-5 border border-gray-100">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-gray-500 text-sm">Vacunas pendientes</p>
+                                    <h3 class="text-3xl font-bold mt-1">7</h3>
+                                </div>
+                                <div class="text-4xl">💉</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-[#f5f7fb] rounded-3xl p-5 border border-gray-100">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-gray-500 text-sm">Pacientes registrados</p>
+                                    <h3 class="text-3xl font-bold mt-1">542</h3>
+                                </div>
+                                <div class="text-4xl">🐾</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-                {{-- Right --}}
-                <div class="relative">
-
-                    <div class="absolute inset-0 bg-cyan-500/20 blur-3xl rounded-full"></div>
-
-                    <div class="relative bg-white/5 border border-white/10 rounded-[32px] p-6 backdrop-blur-2xl shadow-2xl">
-
-                        {{-- Fake Dashboard --}}
-                        <div class="flex items-center justify-between mb-8">
-                            <div>
-                                <h2 class="font-bold text-xl">Dashboard</h2>
-                                <p class="text-gray-400 text-sm">
-                                    Clínica veterinaria
-                                </p>
-                            </div>
-
-                            <div class="w-12 h-12 rounded-2xl bg-cyan-500 flex items-center justify-center">
-                                🐶
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-
-                            <div class="bg-[#0d1823] rounded-2xl p-5 border border-white/5">
-                                <p class="text-gray-400 text-sm">Consultas</p>
-                                <h3 class="text-3xl font-bold mt-2">128</h3>
-                            </div>
-
-                            <div class="bg-[#0d1823] rounded-2xl p-5 border border-white/5">
-                                <p class="text-gray-400 text-sm">Vacunas</p>
-                                <h3 class="text-3xl font-bold mt-2">64</h3>
-                            </div>
-
-                            <div class="bg-[#0d1823] rounded-2xl p-5 border border-white/5">
-                                <p class="text-gray-400 text-sm">Hospitalizados</p>
-                                <h3 class="text-3xl font-bold mt-2">12</h3>
-                            </div>
-
-                            <div class="bg-[#0d1823] rounded-2xl p-5 border border-white/5">
-                                <p class="text-gray-400 text-sm">Inventario</p>
-                                <h3 class="text-3xl font-bold mt-2">89%</h3>
-                            </div>
-
-                        </div>
-
-                        <div class="mt-6 bg-[#0d1823] rounded-2xl p-5 border border-white/5">
-                            <div class="flex justify-between mb-3">
-                                <span class="text-gray-400">Actividad diaria</span>
-                                <span class="text-cyan-400">+18%</span>
-                            </div>
-
-                            <div class="h-3 bg-white/5 rounded-full overflow-hidden">
-                                <div class="h-full w-[75%] bg-cyan-500 rounded-full"></div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                </div>
-
             </div>
 
         </section>
+    </main>
 
-    </body>
+</body>
 </html>
