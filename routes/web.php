@@ -31,6 +31,10 @@ Route::middleware('auth')->group(function () {
 use App\Http\Controllers\MascotaController;
 
 
+
+Route::resource('mascotas', MascotaController::class);
+
+
 Route::get('/mascotas/{mascota}', [MascotaController::class, 'show'])
     ->name('mascotas.show');
 
@@ -135,14 +139,36 @@ Route::get('/esterilizaciones/{esterilizacion}', [EsterilizacionController::clas
 Route::get('/esterilizaciones/create/{mascota}', [EsterilizacionController::class, 'form'])
     ->name('esterilizaciones.form');
 
+
 use App\Http\Controllers\PacienteController;
 
 Route::resource('pacientes', PacienteController::class);
 
+// Editar/actualizar propietario usando el mismo controlador
+Route::get('/propietarios/{propietario}/edit', [PacienteController::class, 'editPropietario'])
+    ->name('propietarios.edit');
+
+Route::put('/propietarios/{propietario}', [PacienteController::class, 'updatePropietario'])
+    ->name('propietarios.update');
+
+Route::delete('/propietarios/{propietario}', [PacienteController::class, 'destroyPropietario'])
+    ->name('propietarios.destroy');
+
+    
 use App\Models\Mascota;
+
 
 Route::get('/propietarios/{id}/mascotas', function ($id) {
     return response()->json(
         Mascota::where('propietario_id', $id)->get()
     );
 });
+
+Route::get('/propietarios/{propietario}/mascotas/create',
+    [PacienteController::class, 'createMascota'])
+    ->name('propietarios.mascotas.create');
+
+Route::post('/propietarios/{propietario}/mascotas',
+    [PacienteController::class, 'storeMascota'])
+    ->name('propietarios.mascotas.store');
+

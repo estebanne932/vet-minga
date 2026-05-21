@@ -119,8 +119,8 @@
     @endif
 
     @if ($errors->any())
-        <div class="alert-toast rounded-xl border border-red-200 bg-red-50 px-4 py-3 shadow-lg text-red-800">
-            <p class="font-semibold mb-1">Revisa lo siguiente</p>
+        <div class="fixed top-5 right-5 z-50 max-w-sm w-full bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-xl shadow-lg">
+            <p class="font-semibold mb-2">Revisa lo siguiente</p>
             <ul class="list-disc pl-5 text-sm space-y-1">
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>

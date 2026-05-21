@@ -21,7 +21,13 @@ class PacienteController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('pacientes.index', compact('mascotas'));
+        $propietarios = Propietario::latest()
+            ->paginate(10);
+
+        return view('pacientes.index', compact(
+            'mascotas',
+            'propietarios'
+        ));
     }
 
     /**
@@ -37,6 +43,20 @@ class PacienteController extends Controller
      */
     public function store(Request $request)
     {
+
+        $request->validate([
+            'propietario_id' => 'nullable|exists:propietarios,id',
+            'propietario_telefono' => 'nullable|string|max:255',
+            'propietario_correo' => 'nullable|email|max:255',
+            'propietario_direccion' => 'nullable|string|max:255',
+
+            'mascota_nombre' => 'required|string|max:255',
+            'mascota_especie' => 'nullable|string|max:255',
+            'mascota_raza' => 'nullable|string|max:255',
+            'mascota_edad' => 'nullable|integer|min:0',
+            'mascota_peso' => 'nullable|numeric|min:0',
+        ]);
+
         DB::transaction(function () use ($request) {
 
             // 🧍‍♂️ PROPIETARIO
@@ -107,23 +127,16 @@ class PacienteController extends Controller
             ->with('success', 'Paciente registrado correctamente');
     }
 
-    /**
-     * ✏️ FORM EDITAR
-     */
-    public function edit(Mascota $paciente)
-    {
-        return view('pacientes.edit', compact('paciente'));
-    }
 
-    /**
-     * 🔄 ACTUALIZAR
-     */
     public function update(Request $request, Mascota $paciente)
     {
         DB::transaction(function () use ($request, $paciente) {
 
-            // 🧍‍♂️ PROPIETARIO
             $propietario = $paciente->propietario;
+
+            if (! $propietario) {
+                abort(404, 'Este paciente no tiene propietario asociado.');
+            }
 
             $propietario->update([
                 'nombre'    => $request->propietario_nombre,
@@ -131,67 +144,61 @@ class PacienteController extends Controller
                 'correo'    => $request->propietario_correo,
                 'direccion' => $request->propietario_direccion,
             ]);
+        });
 
-            // 🐶 IMAGEN
-            $imagenPath = $paciente->imagen;
+        return redirect()->route('pacientes.index')
+            ->with('success', 'Actualizado correctamente');
+    }
+    
+    public function destroyPropietario(Propietario $propietario)
+    {
+        DB::transaction(function () use ($propietario) {
+            $propietario->load('mascotas');
 
-            if (
-                $request->hasFile('mascota_imagen') &&
-                $request->file('mascota_imagen')->isValid()
-            ) {
-
-                if ($paciente->imagen && Storage::disk('public')->exists($paciente->imagen)) {
-                    Storage::disk('public')->delete($paciente->imagen);
+            foreach ($propietario->mascotas as $mascota) {
+                if ($mascota->imagen && Storage::disk('public')->exists($mascota->imagen)) {
+                    Storage::disk('public')->delete($mascota->imagen);
                 }
 
-                $imagenPath = $request
-                    ->file('mascota_imagen')
-                    ->store('mascotas', 'public');
+                if ($mascota->qr_code && Storage::disk('public')->exists($mascota->qr_code)) {
+                    Storage::disk('public')->delete($mascota->qr_code);
+                }
+
+                $mascota->delete();
             }
 
-            // 🐾 MASCOTA
-            $paciente->update([
-                'nombre'       => $request->mascota_nombre,
-                'especie'      => $request->mascota_especie,
-                'raza'         => $request->mascota_raza,
-                'edad'         => (int) $request->mascota_edad,
-                'peso'         => $request->mascota_peso,
-                'imagen'       => $imagenPath,
-                'esterilizado' => $request->boolean('mascota_esterilizado'),
-            ]);
+            $propietario->delete();
         });
 
         return redirect()
             ->route('pacientes.index')
-            ->with('success', 'Paciente actualizado correctamente');
+            ->with('success', 'Propietario y sus mascotas eliminados correctamente');
     }
 
-    /**
-     * 🗑️ ELIMINAR
-     */
-    public function destroy(Mascota $paciente)
+
+    public function editPropietario(Propietario $propietario)
     {
-        DB::transaction(function () use ($paciente) {
-
-            // 🧹 Eliminar imagen si existe
-            if ($paciente->imagen && Storage::disk('public')->exists($paciente->imagen)) {
-                Storage::disk('public')->delete($paciente->imagen);
-            }
-
-            // ❌ Eliminar mascota
-            $paciente->delete();
-
-            // 🧠 OPCIONAL: eliminar propietario si ya no tiene mascotas
-            if ($paciente->propietario && $paciente->propietario->mascotas()->count() === 0) {
-                $paciente->propietario->delete();
-            }
-        });
-
-        return redirect()
-            ->route('pacientes.index')
-            ->with('success', 'Paciente eliminado correctamente');
+        return view('pacientes.edit-propietario', compact('propietario'));
     }
 
+    public function updatePropietario(Request $request, Propietario $propietario)
+    {
+        $request->validate([
+            'nombre'    => 'required|string|max:255',
+            'telefono'  => 'nullable|string|max:255',
+            'correo'    => 'nullable|email|max:255',
+            'direccion' => 'nullable|string|max:255',
+        ]);
+
+        $propietario->update([
+            'nombre'    => $request->nombre,
+            'telefono'  => $request->telefono,
+            'correo'    => $request->correo,
+            'direccion' => $request->direccion,
+        ]);
+
+        return redirect()->route('pacientes.index')->with('success', 'Propietario actualizado correctamente');
+    }
      /**
      * 👁️ VER DETALLE (opcional)
      */
@@ -205,4 +212,43 @@ class PacienteController extends Controller
 
         return view('pacientes.show', compact('paciente'));
     }
+
+
+
+public function createMascota(Propietario $propietario)
+{
+    return view('pacientes.create-mascota', compact('propietario'));
+}
+
+public function storeMascota(Request $request, Propietario $propietario)
+{
+    $request->validate([
+        'mascota_nombre' => 'required|string|max:255',
+        'mascota_especie' => 'nullable|string|max:255',
+        'mascota_raza' => 'nullable|string|max:255',
+        'mascota_edad' => 'nullable|integer|min:0',
+        'mascota_peso' => 'nullable|numeric|min:0',
+        'mascota_imagen' => 'nullable|image',
+        'mascota_esterilizado' => 'nullable|boolean',
+    ]);
+
+    $imagenPath = null;
+
+    if ($request->hasFile('mascota_imagen') && $request->file('mascota_imagen')->isValid()) {
+        $imagenPath = $request->file('mascota_imagen')->store('mascotas', 'public');
+    }
+
+    Mascota::create([
+        'nombre' => $request->mascota_nombre,
+        'especie' => $request->mascota_especie,
+        'raza' => $request->mascota_raza,
+        'edad' => $request->mascota_edad,
+        'peso' => $request->mascota_peso,
+        'imagen' => $imagenPath,
+        'esterilizado' => $request->boolean('mascota_esterilizado'),
+        'propietario_id' => $propietario->id,
+    ]);
+
+    return redirect()->route('pacientes.index')->with('success', 'Mascota agregada correctamente');
+}
 }

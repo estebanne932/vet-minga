@@ -85,7 +85,29 @@ class ConsultaController extends Controller
 
     public function store(Request $request)
     {
-        
+
+         $request->validate([
+            'propietario_id' => 'required|exists:propietarios,id',
+            'propietario_telefono' => 'nullable|string|max:255',
+            'propietario_correo' => 'nullable|email|max:255',
+            'propietario_direccion' => 'nullable|string|max:255',
+
+            'mascota_id' => 'required|exists:mascotas,id',
+            'mascota_especie' => 'nullable|string|max:255',
+            'mascota_raza' => 'nullable|string|max:255',
+            'mascota_edad' => 'nullable|string|max:255',
+            'mascota_peso' => 'nullable|numeric|min:0',
+
+            'motivo' => 'required|string',
+            'fecha' => 'required|date',
+            'veterinario' => 'required|string|max:255',
+        ], [
+            'propietario_id.required' => 'Debes seleccionar un propietario.',
+            'mascota_id.required' => 'Debes seleccionar una mascota.',
+            'motivo.required' => 'El motivo de consulta es obligatorio.',
+            'fecha.required' => 'La fecha es obligatoria.',
+            'veterinario.required' => 'El veterinario es obligatorio.',
+        ]);
     
         DB::transaction(function () use ($request) {
 
@@ -298,7 +320,6 @@ class ConsultaController extends Controller
         });
 
         
-
         return redirect()
             ->route('consultas.index')
             ->with('success', 'Consulta registrada correctamente');

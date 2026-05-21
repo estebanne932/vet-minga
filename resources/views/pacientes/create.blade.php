@@ -1,72 +1,245 @@
 <x-app-layout>
-    <div class="max-w-4xl mx-auto p-6">
+    <div class="max-w-5xl mx-auto py-8 px-4">
 
-        <h2 class="text-xl font-bold mb-6">Nuevo paciente</h2>
+        {{-- HEADER --}}
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold text-gray-800">
+                Nuevo paciente
+            </h2>
+
+            <p class="text-gray-500 mt-1">
+                Registra la información del propietario y la mascota.
+            </p>
+        </div>
 
         <form method="POST" action="{{ route('pacientes.store') }}" enctype="multipart/form-data">
             @csrf
 
-            {{-- 🧍‍♂️ PROPIETARIO --}}
-            <h3 class="font-semibold mb-2">Propietario</h3>
+            {{-- =========================
+                PROPIETARIO
+            ========================== --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
 
-            <input type="hidden" name="propietario_id" id="propietario_id">
+                <div class="flex items-center gap-2 mb-6">
+                    <div class="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center">
+                        👤
+                    </div>
 
-            <div class="grid grid-cols-2 gap-4 mb-6">
-                <div class="col-span-2 relative">
-                    <input
-                        id="propietario_nombre"
-                        name="propietario_nombre"
-                        class="input w-full"
-                        placeholder="Nombre del propietario"
-                        autocomplete="off"
-                    >
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">
+                            Propietario
+                        </h3>
 
-                    <div id="propietario-suggestions"
-                        class="absolute bg-white border w-full z-20 hidden"></div>
+                        <p class="text-sm text-gray-500">
+                            Datos de contacto del dueño de la mascota.
+                        </p>
+                    </div>
                 </div>
 
-                <input name="propietario_telefono" class="input" placeholder="Teléfono">
-                <input name="propietario_correo" class="input" placeholder="Correo">
-                <input name="propietario_direccion" class="input" placeholder="Dirección">
+                <input type="hidden" name="propietario_id" id="propietario_id">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                    {{-- Nombre --}}
+                    <div class="md:col-span-2 relative">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Nombre del propietario
+                        </label>
+
+                        <input
+                            id="propietario_nombre"
+                            name="propietario_nombre"
+                            type="text"
+                            autocomplete="off"
+                            class="w-full rounded-xl border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 transition"
+                        >
+
+                        <div
+                            id="propietario-suggestions"
+                            class="absolute mt-2 bg-white border border-gray-200 rounded-xl shadow-lg w-full z-20 hidden overflow-hidden"
+                        ></div>
+                    </div>
+
+                    {{-- Teléfono --}}
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Teléfono
+                        </label>
+
+                        <input
+                            name="propietario_telefono"
+                            type="text"
+                            class="w-full rounded-xl border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 transition"
+                        >
+                    </div>
+
+                    {{-- Correo --}}
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Correo electrónico
+                        </label>
+
+                        <input
+                            name="propietario_correo"
+                            type="email"
+                            class="w-full rounded-xl border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 transition"
+                        >
+                    </div>
+
+                    {{-- Dirección --}}
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Dirección
+                        </label>
+
+                        <input
+                            name="propietario_direccion"
+                            type="text"
+                            class="w-full rounded-xl border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 transition"
+                        >
+                    </div>
+
+                </div>
             </div>
 
-            {{-- 🐶 MASCOTA --}}
-            <h3 class="font-semibold mb-2">Mascota</h3>
+            {{-- =========================
+                MASCOTA
+            ========================== --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
 
-            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="flex items-center gap-2 mb-6">
+                    <div class="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center">
+                        🐾
+                    </div>
 
-                <div class="col-span-2">
-                    <input
-                        name="mascota_nombre"
-                        class="input w-full"
-                        placeholder="Nombre de la mascota"
-                    >
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">
+                            Mascota
+                        </h3>
+
+                        <p class="text-sm text-gray-500">
+                            Información general del paciente.
+                        </p>
+                    </div>
                 </div>
 
-                <div class="col-span-2">
-                    <label class="text-sm text-gray-600">Foto</label>
-                    <input type="file" name="mascota_imagen" class="input w-full">
-                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-                <div class="col-span-2 flex items-center gap-3">
-                    <input type="checkbox" name="mascota_esterilizado" value="1">
-                    <label class="text-sm">Esterilizado</label>
-                </div>
+                    {{-- Nombre mascota --}}
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Nombre de la mascota
+                        </label>
 
-                <input name="mascota_especie" class="input" placeholder="Especie">
-                <input name="mascota_raza" class="input" placeholder="Raza">
-                <input name="mascota_edad" class="input" placeholder="Edad">
-                <input name="mascota_peso" class="input" placeholder="Peso">
+                        <input
+                            name="mascota_nombre"
+                            type="text"
+                            class="w-full rounded-xl border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 transition"
+                        >
+                    </div>
+
+                    {{-- Imagen --}}
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Foto de la mascota
+                        </label>
+
+                        <input
+                            type="file"
+                            name="mascota_imagen"
+                            class="w-full rounded-xl border border-gray-300 bg-white file:bg-teal-50 file:border-0 file:px-4 file:py-2 file:mr-4 file:text-teal-700 hover:file:bg-teal-100"
+                        >
+                    </div>
+
+                    {{-- Esterilizado --}}
+                    <div class="md:col-span-2">
+                        <label class="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                name="mascota_esterilizado"
+                                value="1"
+                                class="rounded border-gray-300 text-teal-600 focus:ring-teal-500"
+                            >
+
+                            <span class="text-sm font-medium text-gray-700">
+                                Mascota esterilizada
+                            </span>
+                        </label>
+                    </div>
+
+                    {{-- Especie --}}
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Especie
+                        </label>
+
+                         <select
+                            name="mascota_especie"
+                            class="w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-700
+                                focus:bg-white focus:border-teal-500 focus:ring-4 focus:ring-teal-100 transition"
+                        >
+                            <option value="">Selecciona una especie</option>
+                            <option value="Canino">Canino</option>
+                            <option value="Felino">Felino</option>
+                        </select>
+                    </div>
+
+                    {{-- Raza --}}
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Raza
+                        </label>
+
+                        <input
+                            name="mascota_raza"
+                            type="text"
+                            class="w-full rounded-xl border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 transition"
+                        >
+                    </div>
+
+                    {{-- Edad --}}
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Edad
+                        </label>
+
+                        <input
+                            name="mascota_edad"
+                            type="text"
+                            class="w-full rounded-xl border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 transition"
+                        >
+                    </div>
+
+                    {{-- Peso --}}
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Peso
+                        </label>
+
+                        <input
+                            name="mascota_peso"
+                            type="text"
+                            class="w-full rounded-xl border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 transition"
+                        >
+                    </div>
+
+                </div>
             </div>
 
-            <button class="bg-teal-600 text-white px-6 py-2 rounded">
-                Guardar paciente
-            </button>
+            {{-- BOTÓN --}}
+            <div class="flex justify-end">
+                <button
+                    class="bg-teal-600 hover:bg-teal-700 text-white font-medium px-8 py-3 rounded-xl shadow-sm transition"
+                >
+                    Guardar paciente
+                </button>
+            </div>
+
         </form>
 
     </div>
 
-    {{-- 🔥 AUTOCOMPLETE (REUTILIZADO) --}}
+    {{-- 🔥 AUTOCOMPLETE --}}
     <script>
         const propietarioInput = document.getElementById('propietario_nombre');
         const propietarioIdInput = document.getElementById('propietario_id');
@@ -89,8 +262,14 @@
 
             data.forEach(p => {
                 const div = document.createElement('div');
-                div.className = 'p-2 hover:bg-gray-100 cursor-pointer';
-                div.textContent = p.nombre;
+
+                div.className =
+                    'px-4 py-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0';
+
+                div.innerHTML = `
+                    <div class="font-medium text-gray-800">${p.nombre}</div>
+                    <div class="text-sm text-gray-500">${p.telefono ?? ''}</div>
+                `;
 
                 div.onclick = () => {
                     propietarioInput.value = p.nombre;
@@ -109,3 +288,4 @@
     </script>
 
 </x-app-layout>
+
