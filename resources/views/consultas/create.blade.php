@@ -1,7 +1,16 @@
 
 <x-app-layout>
     <div class="max-w-5xl mx-auto p-6">
-        <h2 class="text-xl font-bold mb-6">Nueva Consulta</h2>
+        <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800">
+                        Nueva Consulta
+                    </h3>
+                    <p class="text-sm text-gray-500">
+                        Registro clínico 
+                    </p>
+                </div>
+            </div>
 
         <form id="consulta-form" method="POST" action="{{ route('consultas.store') }}" enctype="multipart/form-data">
             @csrf
@@ -320,6 +329,7 @@
                         <input
                             type="date"
                             name="fecha"
+                            value="{{ now()->format('Y-m-d') }}"
                             class="w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-700
                                 focus:bg-white focus:border-teal-500 focus:ring-4 focus:ring-teal-100 transition"
                         >
@@ -334,6 +344,7 @@
                         <input
                             name="veterinario"
                             type="text"
+                            value="Valeria Mingura Gamboa"
                             placeholder="Nombre del veterinario"
                             class="w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-700
                                 focus:bg-white focus:border-teal-500 focus:ring-4 focus:ring-teal-100 transition"

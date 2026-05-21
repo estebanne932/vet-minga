@@ -1,94 +1,132 @@
 <x-app-layout>
     <div class="max-w-7xl mx-auto p-6">
 
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-bold">Cartas de Consentimiento</h2>
-
-           <a href="{{ route('esterilizaciones.create') }}">
-                Nueva carta
+        <div class="fixed bottom-6 right-6 z-50">
+            <a
+                href="{{ route('esterilizaciones.create') }}"
+                class="w-16 h-16 flex items-center justify-center rounded-full bg-cyan-600 text-white shadow-xl hover:bg-cyan-700 hover:scale-110 transition-all duration-200"
+                title="Nueva carta"
+            >
+                <i class="bi bi-plus-lg text-2xl"></i>
             </a>
-
         </div>
 
-        <div class="bg-white shadow rounded overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr class="text-left text-sm text-gray-600">
-                        <th class="px-4 py-3">Fecha</th>
-                        <th class="px-4 py-3">Propietario</th>
-                        <th class="px-4 py-3">Mascota</th>
-                        <th class="px-4 py-3">Tipo</th>
-                        <th class="px-4 py-3">Veterinario</th>
-                        <th class="px-4 py-3">PDF</th>
-                        <th class="px-4 py-3 text-right">Acciones</th>
-                    </tr>
-                </thead>
+        <div class="mt-10">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800">
+                        Esterilizaciones
+                    </h3>
+                    <p class="text-sm text-gray-500">
+                        Registro de procedimientos y documentos PDF
+                    </p>
+                </div>
+            </div>
 
-                <tbody class="divide-y divide-gray-100 text-sm">
-                    @forelse ($esterilizaciones as $esterilizacion)
-                        <tr>
-                            <td class="px-4 py-3">
-                                {{ \Carbon\Carbon::parse($esterilizacion->fecha)->format('d/m/Y') }}
-                            </td>
+            <div class="bg-white rounded-2xl shadow-lg ring-1 ring-gray-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm">
+                        <thead class="bg-gradient-to-r from-cyan-600 to-teal-600 text-white">
+                            <tr class="text-left">
+                                <th class="px-6 py-4 font-semibold">Fecha</th>
+                                <th class="px-6 py-4 font-semibold">Propietario</th>
+                                <th class="px-6 py-4 font-semibold">Mascota</th>
+                                <th class="px-6 py-4 font-semibold">Tipo</th>
+                                <th class="px-6 py-4 font-semibold">Veterinario</th>
+                                <th class="px-6 py-4 font-semibold text-center">PDF</th>
+                                <th class="px-6 py-4 font-semibold text-center">Acciones</th>
+                            </tr>
+                        </thead>
 
-                            <td class="px-4 py-3">
-                                {{ $esterilizacion->propietario->nombre ?? '—' }}
-                            </td>
+                        <tbody class="divide-y divide-gray-100 bg-white">
+                            @forelse ($esterilizaciones as $esterilizacion)
+                                <tr class="hover:bg-cyan-50/60 transition-colors duration-200">
+                                    <td class="px-6 py-4 whitespace-nowrap text-gray-700">
+                                        {{ \Carbon\Carbon::parse($esterilizacion->fecha)->format('d/m/Y') }}
+                                    </td>
 
-                            <td class="px-4 py-3">
-                                {{ $esterilizacion->mascota->nombre ?? '—' }}
-                            </td>
+                                    <td class="px-6 py-4 text-gray-700 whitespace-nowrap">
+                                        {{ $esterilizacion->propietario->nombre ?? '—' }}
+                                    </td>
 
-                            <td class="px-4 py-3">
-                                {{ $esterilizacion->tipo }}
-                            </td>
+                                    <td class="px-6 py-4 text-gray-700 whitespace-nowrap">
+                                        {{ $esterilizacion->mascota->nombre ?? '—' }}
+                                    </td>
 
-                            <td class="px-4 py-3">
-                                {{ $esterilizacion->veterinario }}
-                            </td>
+                                    <td class="px-6 py-4 text-gray-700">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
+                                            {{ $esterilizacion->tipo }}
+                                        </span>
+                                    </td>
 
-                            <td class="px-4 py-3">
-                                @if($esterilizacion->archivo_pdf)
-                                    <a
-                                        href=""
-                                        class="text-green-600 hover:underline"
-                                    >
-                                        Ver PDF
-                                    </a>
-                                @else
-                                    <span class="text-gray-400">—</span>
-                                @endif
-                            </td>
+                                    <td class="px-6 py-4 text-gray-700 whitespace-nowrap">
+                                        {{ $esterilizacion->veterinario }}
+                                    </td>
 
-                            <td class="px-4 py-3 text-right space-x-2">
+                                    <td class="px-6 py-4 text-center">
+                                        @if($esterilizacion->archivo_pdf)
+                                            <a
+                                                href="{{ asset('storage/' . $esterilizacion->archivo_pdf) }}"
+                                                target="_blank"
+                                                class="inline-flex items-center gap-2 px-3 py-2 rounded-full bg-red-100 text-red-700 font-semibold text-xs shadow-sm transition-all duration-200 hover:bg-red-600 hover:text-white hover:scale-105"
+                                                title="Ver PDF"
+                                            >
+                                                <i class="bi bi-file-earmark-pdf-fill text-sm"></i>
+                                                PDF
+                                            </a>
+                                        @else
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-500 text-xs font-semibold">
+                                                Sin archivo
+                                            </span>
+                                        @endif
+                                    </td>
 
-                                <a
-                                    href="{{ route('esterilizaciones.show', $esterilizacion) }}"
-                                    class="text-teal-600 hover:underline"
-                                >
-                                    Ver
-                                </a>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <a
+                                                href="{{ route('esterilizaciones.show', $esterilizacion) }}"
+                                                class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-teal-100 text-teal-600 shadow-sm transition-all duration-200 hover:bg-teal-600 hover:text-white hover:scale-105 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                                                title="Ver esterilización"
+                                            >
+                                                <i class="bi bi-eye-fill text-base"></i>
+                                            </a>
 
-                                <form action="{{ route('esterilizaciones.destroy', $esterilizacion->id) }}" method="POST" onsubmit="return confirm('¿Eliminar registro?')">
-                                    @csrf
-                                    @method('DELETE')
+                                            <form
+                                                action="{{ route('esterilizaciones.destroy', $esterilizacion->id) }}"
+                                                method="POST"
+                                                onsubmit="return confirm('¿Eliminar registro?')"
+                                            >
+                                                @csrf
+                                                @method('DELETE')
 
-                                    <button class="text-red-600 hover:underline">
-                                        Eliminar
-                                    </button>
-                                </form>
-
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="px-4 py-6 text-center text-gray-500">
-                                No hay cartas registradas
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                                                <button
+                                                    type="submit"
+                                                    class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-red-100 text-red-600 shadow-sm transition-all duration-200 hover:bg-red-600 hover:text-white hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400"
+                                                    title="Eliminar esterilización"
+                                                >
+                                                    <i class="bi bi-trash-fill text-base"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="px-6 py-10 text-center">
+                                        <div class="flex flex-col items-center gap-2 text-gray-500">
+                                            <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center">
+                                                <i class="bi bi-scissors text-2xl text-gray-400"></i>
+                                            </div>
+                                            <p class="font-medium">No hay cartas registradas</p>
+                                            <p class="text-sm">Agrega el primer registro de esterilización para comenzar.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <div class="mt-4">

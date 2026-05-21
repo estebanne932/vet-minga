@@ -1,354 +1,508 @@
 <x-app-layout>
-    <div class="max-w-5xl mx-auto p-6 space-y-6">
+    <div class="py-8 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-6xl mx-auto space-y-6">
 
-        {{-- Header --}}
-        <div class="flex justify-between items-center">
-            <h2 class="text-xl font-bold">
-                Consulta #{{ $consulta->expediente_num }}
-            </h2>
+            {{-- HEADER --}}
+            <div class="bg-gradient-to-r from-cyan-600 to-teal-600 rounded-2xl p-6 text-white shadow-lg">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center">
+                            <i class="bi bi-clipboard2-pulse-fill text-2xl"></i>
+                        </div>
 
-            <a
-                href="{{ route('consultas.index') }}"
-                class="text-sm text-gray-600 hover:underline"
-            >
-                ← Volver
-            </a>
-        </div>
-
-        {{-- Estatus --}}
-        <div>
-            <span class="px-3 py-1 rounded-full text-xs font-semibold
-                @if($consulta->estatus === 'abierta') bg-green-100 text-green-700
-                @elseif($consulta->estatus === 'en_proceso') bg-yellow-100 text-yellow-700
-                @elseif($consulta->estatus === 'cerrada') bg-gray-200 text-gray-700
-                @else bg-red-100 text-red-700
-                @endif
-            ">
-                {{ ucfirst(str_replace('_',' ', $consulta->estatus)) }}
-            </span>
-        </div>
-
-        {{-- PROPIETARIO --}}
-        <div class="bg-white rounded shadow p-5">
-            <h3 class="font-semibold mb-3">Propietario</h3>
-
-            <p><strong>Nombre:</strong> {{ $consulta->propietario->nombre }}</p>
-            <p><strong>Teléfono:</strong> {{ $consulta->propietario->telefono }}</p>
-            <p><strong>Correo:</strong> {{ $consulta->propietario->correo }}</p>
-            <p><strong>Dirección:</strong> {{ $consulta->propietario->direccion }}</p>
-        </div>
-
-        {{-- MASCOTA --}}
-        <div class="bg-white rounded shadow p-5">
-            <h3 class="font-semibold mb-3">Mascota</h3>
-
-            <div class="flex gap-6">
-                @if($consulta->mascota->imagen)
-                    <img
-                        src="{{ asset('storage/' . $consulta->mascota->imagen) }}"
-                        class="w-32 h-32 object-cover rounded border"
-                    >
-                @endif
-
-                <div>
-                    <p><strong>Nombre:</strong> {{ $consulta->mascota->nombre }}</p>
-                    <p><strong>Especie:</strong> {{ $consulta->mascota->especie }}</p>
-                    <p><strong>Raza:</strong> {{ $consulta->mascota->raza }}</p>
-                    <p><strong>Edad:</strong> {{ $consulta->mascota->edad }}</p>
-                    <p><strong>Peso:</strong> {{ $consulta->mascota->peso }}</p>
-                    <p><strong>Esterilizada:</strong>
-                        {{ $consulta->mascota->esterilizado ? 'Sí' : 'No' }}
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        {{-- CONSULTA --}}
-        <div class="bg-white rounded shadow p-5">
-            <h3 class="font-semibold mb-3">Datos de la consulta</h3>
-
-            <p><strong>Fecha:</strong>
-                {{ \Carbon\Carbon::parse($consulta->fecha)->format('d/m/Y') }}
-            </p>
-
-            <p><strong>Veterinario:</strong> {{ $consulta->veterinario }}</p>
-
-            <div class="mt-3">
-                <strong>Motivo:</strong>
-                <p class="mt-1 text-gray-700">{{ $consulta->motivo }}</p>
-            </div>
-        </div>
-
-        {{-- EXAMEN FÍSICO --}}
-        <h3 class="text-lg font-bold mt-8 mb-4">Examen físico</h3>
-
-        <div class="bg-white rounded shadow p-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                @forelse ($consulta->examenFisico as $item)
-                    <div class="border rounded p-3">
-                        <p class="text-xs font-semibold text-gray-500 uppercase">
-                            {{ $item->punto }}
-                        </p>
-                        <p class="text-gray-700 mt-1 text-sm">
-                            {{ $item->respuesta ?: '—' }}
-                        </p>
+                        <div>
+                            <h2 class="text-2xl font-bold">
+                                Consulta #{{ $consulta->expediente_num }}
+                            </h2>
+                            <p class="text-cyan-100 text-sm">
+                                Expediente clínico veterinario
+                            </p>
+                        </div>
                     </div>
-                @empty
-                    <p class="text-gray-500 text-sm col-span-2">
-                        No se registró examen físico descriptivo.
-                    </p>
-                @endforelse
-            </div>
-        </div>
 
-        {{-- EXAMEN FÍSICO CHECK --}}
-        <h3 class="text-lg font-bold mt-8 mb-4">
-            Examen físico (checklist)
-        </h3>
-
-        <div class="bg-white rounded shadow p-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                @forelse ($consulta->examenFisicoCheck as $item)
-                    <div class="flex items-center justify-between border rounded p-3">
-                        <span class="text-sm text-gray-700">
-                            {{ $item->punto }}
+                    <div class="flex items-center gap-3">
+                        <span class="px-4 py-2 rounded-full text-sm font-semibold
+                            @if($consulta->estatus === 'abierta') bg-green-100 text-green-700
+                            @elseif($consulta->estatus === 'en_proceso') bg-yellow-100 text-yellow-700
+                            @elseif($consulta->estatus === 'cerrada') bg-gray-200 text-gray-700
+                            @else bg-red-100 text-red-700
+                            @endif
+                        ">
+                            {{ ucfirst(str_replace('_',' ', $consulta->estatus)) }}
                         </span>
 
-                        @if ($item->respuesta)
-                            <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
-                                Sí
-                            </span>
+                        <a
+                            href="{{ route('consultas.index') }}"
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white text-cyan-700 font-medium hover:scale-105 transition"
+                        >
+                            <i class="bi bi-arrow-left-circle-fill"></i>
+                            Volver
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {{-- PROPIETARIO --}}
+            <div class="bg-white rounded-2xl shadow-lg ring-1 ring-gray-200 p-6">
+                <div class="flex items-center gap-2 mb-5">
+                    <div class="w-10 h-10 rounded-full bg-cyan-100 text-cyan-700 flex items-center justify-center">
+                        <i class="bi bi-person-fill text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800">
+                        Propietario
+                    </h3>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <p class="text-gray-500 mb-1">Nombre</p>
+                        <p class="font-semibold text-gray-800">{{ $consulta->propietario->nombre }}</p>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <p class="text-gray-500 mb-1">Teléfono</p>
+                        <p class="font-semibold text-gray-800">{{ $consulta->propietario->telefono }}</p>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <p class="text-gray-500 mb-1">Correo</p>
+                        <p class="font-semibold text-gray-800 break-all">{{ $consulta->propietario->correo }}</p>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <p class="text-gray-500 mb-1">Dirección</p>
+                        <p class="font-semibold text-gray-800">{{ $consulta->propietario->direccion }}</p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- MASCOTA --}}
+            <div class="bg-white rounded-2xl shadow-lg ring-1 ring-gray-200 p-6">
+                <div class="flex items-center gap-2 mb-5">
+                    <div class="w-10 h-10 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center">
+                        <i class="bi bi-heart-pulse-fill text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800">
+                        Mascota
+                    </h3>
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-6 items-start">
+                    <div class="shrink-0">
+                        @if($consulta->mascota->imagen)
+                            <img
+                                src="{{ asset('storage/' . $consulta->mascota->imagen) }}"
+                                class="w-40 h-40 object-cover rounded-2xl border-4 border-cyan-100 shadow-sm"
+                                alt="Foto de {{ $consulta->mascota->nombre }}"
+                            >
                         @else
-                            <span class="px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold">
-                                No
-                            </span>
+                            <div class="w-40 h-40 rounded-2xl border-4 border-cyan-100 shadow-sm bg-gray-100 flex items-center justify-center text-gray-400">
+                                <i class="bi bi-image text-4xl"></i>
+                            </div>
                         @endif
                     </div>
-                @empty
-                    <p class="text-gray-500 text-sm col-span-3 text-center">
-                        No se registró checklist de examen físico.
-                    </p>
-                @endforelse
-            </div>
-        </div>
 
-        {{-- Quimica --}}
-<h3 class="text-lg font-bold mt-8 mb-4">Quimica</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1 text-sm">
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                            <p class="text-gray-500 mb-1">Nombre</p>
+                            <p class="font-semibold text-gray-800">{{ $consulta->mascota->nombre }}</p>
+                        </div>
 
-<div class="bg-white rounded shadow p-6 flex items-center justify-between">
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                            <p class="text-gray-500 mb-1">Especie</p>
+                            <p class="font-semibold text-gray-800">{{ $consulta->mascota->especie }}</p>
+                        </div>
 
-    <div>
-        <p class="text-sm text-gray-700">
-            Estado:
-            @if($consulta->quimica->isNotEmpty())
-                <span class="ml-2 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
-                    Registrada
-                </span>
-            @else
-                <span class="ml-2 px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold">
-                    No registrada
-                </span>
-            @endif
-        </p>
-    </div>
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                            <p class="text-gray-500 mb-1">Raza</p>
+                            <p class="font-semibold text-gray-800">{{ $consulta->mascota->raza }}</p>
+                        </div>
 
-    <div class="flex gap-2">
-        @if($consulta->quimica->isNotEmpty())
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                            <p class="text-gray-500 mb-1">Edad</p>
+                            <p class="font-semibold text-gray-800">{{ $consulta->mascota->edad }}</p>
+                        </div>
 
-            {{-- VER --}}
-            <a
-                href="{{ route('quimica.show', $consulta->id) }}"
-                class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 text-sm"
-            >
-                Ver
-            </a>
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                            <p class="text-gray-500 mb-1">Peso</p>
+                            <p class="font-semibold text-gray-800">{{ $consulta->mascota->peso }}</p>
+                        </div>
 
-            {{-- EDITAR --}}
-            <a
-                href="{{ route('quimica.edit', $consulta->id) }}"
-                class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-sm"
-            >
-                Editar
-            </a>
-
-            {{-- ELIMINAR --}}
-            <form
-                action="{{ route('quimica.destroy', $consulta->id) }}"
-                method="POST"
-                onsubmit="return confirm('¿Seguro que deseas eliminar la biometría hemática?');"
-            >
-                @csrf
-                @method('DELETE')
-
-                <button
-                    type="submit"
-                    class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
-                >
-                    Eliminar
-                </button>
-            </form>
-
-        @else
-
-            {{-- AGREGAR --}}
-            <a
-                href="{{ route('quimica.create', $consulta->id) }}"
-                class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 text-sm"
-            >
-                Agregar biometría
-            </a>
-
-        @endif
-    </div>
-
-</div>
-
-
-
-
-        {{-- BIOMETRÍA HEMÁTICA --}}
-<h3 class="text-lg font-bold mt-8 mb-4">Biometría hemática</h3>
-
-<div class="bg-white rounded shadow p-6 flex items-center justify-between">
-
-    <div>
-        <p class="text-sm text-gray-700">
-            Estado:
-            @if($consulta->biometria->isNotEmpty())
-                <span class="ml-2 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
-                    Registrada
-                </span>
-            @else
-                <span class="ml-2 px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold">
-                    No registrada
-                </span>
-            @endif
-        </p>
-    </div>
-
-    <div class="flex gap-2">
-        @if($consulta->biometria->isNotEmpty())
-
-            {{-- VER --}}
-            <a
-                href="{{ route('biometrias.show', $consulta->id) }}"
-                class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 text-sm"
-            >
-                Ver
-            </a>
-
-            {{-- EDITAR --}}
-            <a
-                href="{{ route('biometrias.edit', $consulta->id) }}"
-                class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-sm"
-            >
-                Editar
-            </a>
-
-            {{-- ELIMINAR --}}
-            <form
-                action="{{ route('biometrias.destroy', $consulta->id) }}"
-                method="POST"
-                onsubmit="return confirm('¿Seguro que deseas eliminar la biometría hemática?');"
-            >
-                @csrf
-                @method('DELETE')
-
-                <button
-                    type="submit"
-                    class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
-                >
-                    Eliminar
-                </button>
-            </form>
-
-        @else
-
-            {{-- AGREGAR --}}
-            <a
-                href="{{ route('biometrias.create', $consulta->id) }}"
-                class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 text-sm"
-            >
-                Agregar biometría
-            </a>
-
-        @endif
-    </div>
-
-</div>
-
-
-        {{-- DIAGNÓSTICO --}}
-        <h3 class="text-lg font-bold mt-8 mb-4">Diagnóstico</h3>
-
-        <div class="bg-white rounded shadow p-6 space-y-4">
-            <div>
-                <p class="text-sm font-semibold text-gray-700">
-                    Diagnósticos diferenciales
-                </p>
-                <p class="text-gray-600 mt-1">
-                    {{ $consulta->diagnostico->diagnosticos_diferenciales ?? '—' }}
-                </p>
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                            <p class="text-gray-500 mb-1">Esterilizada</p>
+                            @if($consulta->mascota->esterilizado)
+                                <span class="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
+                                    <i class="bi bi-check-circle-fill mr-1"></i>
+                                    Sí
+                                </span>
+                            @else
+                                <span class="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-500 text-xs font-semibold">
+                                    <i class="bi bi-dash-circle-fill mr-1"></i>
+                                    No
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div>
-                <p class="text-sm font-semibold text-gray-700">
-                    Diagnóstico definitivo
-                </p>
-                <p class="text-gray-600 mt-1">
-                    {{ $consulta->diagnostico->diagnostico_definitivo ?? '—' }}
-                </p>
+            {{-- DATOS DE LA CONSULTA --}}
+            <div class="bg-white rounded-2xl shadow-lg ring-1 ring-gray-200 p-6">
+                <div class="flex items-center gap-2 mb-5">
+                    <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                        <i class="bi bi-clipboard2-pulse-fill text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800">
+                        Datos de la consulta
+                    </h3>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <p class="text-gray-500 mb-1">Fecha</p>
+                        <p class="font-semibold text-gray-800">
+                            {{ \Carbon\Carbon::parse($consulta->fecha)->format('d/m/Y') }}
+                        </p>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <p class="text-gray-500 mb-1">Veterinario</p>
+                        <p class="font-semibold text-gray-800">{{ $consulta->veterinario }}</p>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 sm:col-span-2">
+                        <p class="text-gray-500 mb-1">Motivo</p>
+                        <p class="font-semibold text-gray-800 leading-relaxed">{{ $consulta->motivo }}</p>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        {{-- MEDICAMENTOS APLICADOS --}}
-        <h3 class="text-lg font-bold mt-8 mb-4">Medicamentos aplicados</h3>
+            {{-- EXAMEN FÍSICO --}}
+            <div class="bg-white rounded-2xl shadow-lg ring-1 ring-gray-200 p-6">
+                <div class="flex items-center gap-2 mb-5">
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center">
+                        <i class="bi bi-clipboard2-pulse-fill text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800">
+                        Examen físico
+                    </h3>
+                </div>
 
-        <div class="bg-white rounded shadow overflow-hidden">
-            <table class="min-w-full divide-y divide-gray-200 text-sm">
-                <thead class="bg-gray-50 text-gray-600">
-                    <tr>
-                        <th class="px-4 py-2 text-left">Medicamento</th>
-                        <th class="px-4 py-2 text-left">Dosis</th>
-                        <th class="px-4 py-2 text-left">Frecuencia</th>
-                        <th class="px-4 py-2 text-left">Periodo</th>
-                    </tr>
-                </thead>
-
-                <tbody class="divide-y divide-gray-100">
-                    @forelse ($consulta->medicamentosAplicados as $med)
-                        <tr>
-                            <td class="px-4 py-2">{{ $med->medicamento }}</td>
-                            <td class="px-4 py-2">{{ $med->dosis ?? '—' }}</td>
-                            <td class="px-4 py-2">{{ $med->frecuencia ?? '—' }}</td>
-                            <td class="px-4 py-2">{{ $med->periodo ?? '—' }}</td>
-                        </tr>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    @forelse ($consulta->examenFisico as $item)
+                        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 hover:shadow-sm transition">
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                                {{ $item->punto }}
+                            </p>
+                            <p class="text-gray-700 mt-2 text-sm leading-relaxed">
+                                {{ $item->respuesta ?: '—' }}
+                            </p>
+                        </div>
                     @empty
-                        <tr>
-                            <td colspan="4" class="px-4 py-4 text-center text-gray-500">
-                                No se registraron medicamentos.
-                            </td>
-                        </tr>
+                        <div class="md:col-span-2 text-center py-6 text-gray-500">
+                            No se registró examen físico descriptivo.
+                        </div>
                     @endforelse
-                </tbody>
-            </table>
+                </div>
+            </div>
+
+            {{-- EXAMEN FÍSICO CHECK --}}
+            <div class="bg-white rounded-2xl shadow-lg ring-1 ring-gray-200 p-6">
+                <div class="flex items-center gap-2 mb-5">
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center">
+                        <i class="bi bi-check2-square text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800">
+                        Examen físico (checklist)
+                    </h3>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    @forelse ($consulta->examenFisicoCheck as $item)
+                        <div class="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-xl p-4">
+                            <span class="text-sm text-gray-700 pr-3">
+                                {{ $item->punto }}
+                            </span>
+
+                            @if ($item->respuesta)
+                                <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    Sí
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold">
+                                    <i class="bi bi-x-circle-fill"></i>
+                                    No
+                                </span>
+                            @endif
+                        </div>
+                    @empty
+                        <div class="lg:col-span-3 text-center py-6 text-gray-500">
+                            No se registró checklist de examen físico.
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+
+            {{-- QUÍMICA --}}
+            <div class="bg-white rounded-2xl shadow-lg ring-1 ring-gray-200 p-6">
+                <div class="flex items-center gap-2 mb-5">
+                    <div class="w-10 h-10 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center">
+                        <i class="bi bi-droplet-half text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800">
+                        Química
+                    </h3>
+                </div>
+
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div>
+                        <p class="text-sm text-gray-700">
+                            Estado:
+                            @if($consulta->quimica->isNotEmpty())
+                                <span class="ml-2 inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
+                                    Registrada
+                                </span>
+                            @else
+                                <span class="ml-2 inline-flex items-center px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold">
+                                    No registrada
+                                </span>
+                            @endif
+                        </p>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+                        @if($consulta->quimica->isNotEmpty())
+                            <a
+                                href="{{ route('quimica.show', $consulta->id) }}"
+                                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-600 text-white shadow hover:bg-indigo-700 hover:scale-105 transition"
+                            >
+                                <i class="bi bi-eye-fill"></i>
+                                Ver
+                            </a>
+
+                            <a
+                                href="{{ route('quimica.edit', $consulta->id) }}"
+                                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-500 text-white shadow hover:bg-yellow-600 hover:scale-105 transition"
+                            >
+                                <i class="bi bi-pencil-square"></i>
+                                Editar
+                            </a>
+
+                            <form
+                                action="{{ route('quimica.destroy', $consulta->id) }}"
+                                method="POST"
+                                onsubmit="return confirm('¿Seguro que deseas eliminar la biometría hemática?');"
+                            >
+                                @csrf
+                                @method('DELETE')
+
+                                <button
+                                    type="submit"
+                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-600 text-white shadow hover:bg-red-700 hover:scale-105 transition"
+                                >
+                                    <i class="bi bi-trash-fill"></i>
+                                    Eliminar
+                                </button>
+                            </form>
+                        @else
+                            <a
+                                href="{{ route('quimica.create', $consulta->id) }}"
+                                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-600 text-white shadow hover:bg-indigo-700 hover:scale-105 transition"
+                            >
+                                <i class="bi bi-plus-circle-fill"></i>
+                                Agregar biometría
+                            </a>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            {{-- BIOMETRÍA HEMÁTICA --}}
+            <div class="bg-white rounded-2xl shadow-lg ring-1 ring-gray-200 p-6">
+                <div class="flex items-center gap-2 mb-5">
+                    <div class="w-10 h-10 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center">
+                        <i class="bi bi-droplet-half text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800">
+                        Biometría hemática
+                    </h3>
+                </div>
+
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div>
+                        <p class="text-sm text-gray-700">
+                            Estado:
+                            @if($consulta->biometria->isNotEmpty())
+                                <span class="ml-2 inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
+                                    Registrada
+                                </span>
+                            @else
+                                <span class="ml-2 inline-flex items-center px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold">
+                                    No registrada
+                                </span>
+                            @endif
+                        </p>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+                        @if($consulta->biometria->isNotEmpty())
+                            <a
+                                href="{{ route('biometrias.show', $consulta->id) }}"
+                                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-600 text-white shadow hover:bg-indigo-700 hover:scale-105 transition"
+                            >
+                                <i class="bi bi-eye-fill"></i>
+                                Ver
+                            </a>
+
+                            <a
+                                href="{{ route('biometrias.edit', $consulta->id) }}"
+                                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-500 text-white shadow hover:bg-yellow-600 hover:scale-105 transition"
+                            >
+                                <i class="bi bi-pencil-square"></i>
+                                Editar
+                            </a>
+
+                            <form
+                                action="{{ route('biometrias.destroy', $consulta->id) }}"
+                                method="POST"
+                                onsubmit="return confirm('¿Seguro que deseas eliminar la biometría hemática?');"
+                            >
+                                @csrf
+                                @method('DELETE')
+
+                                <button
+                                    type="submit"
+                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-600 text-white shadow hover:bg-red-700 hover:scale-105 transition"
+                                >
+                                    <i class="bi bi-trash-fill"></i>
+                                    Eliminar
+                                </button>
+                            </form>
+                        @else
+                            <a
+                                href="{{ route('biometrias.create', $consulta->id) }}"
+                                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-600 text-white shadow hover:bg-indigo-700 hover:scale-105 transition"
+                            >
+                                <i class="bi bi-plus-circle-fill"></i>
+                                Agregar biometría
+                            </a>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            {{-- DIAGNÓSTICO --}}
+            <div class="bg-white rounded-2xl shadow-lg ring-1 ring-gray-200 p-6">
+                <div class="flex items-center gap-2 mb-5">
+                    <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center">
+                        <i class="bi bi-file-medical-fill text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800">
+                        Diagnóstico
+                    </h3>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <p class="text-sm font-semibold text-gray-700">
+                            Diagnósticos diferenciales
+                        </p>
+                        <p class="text-gray-600 mt-1 leading-relaxed">
+                            {{ $consulta->diagnostico->diagnosticos_diferenciales ?? '—' }}
+                        </p>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <p class="text-sm font-semibold text-gray-700">
+                            Diagnóstico definitivo
+                        </p>
+                        <p class="text-gray-600 mt-1 leading-relaxed">
+                            {{ $consulta->diagnostico->diagnostico_definitivo ?? '—' }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- MEDICAMENTOS APLICADOS --}}
+            <div class="bg-white rounded-2xl shadow-lg ring-1 ring-gray-200 overflow-hidden">
+                <div class="px-6 pt-6 pb-4 flex items-center gap-2">
+                    <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                        <i class="bi bi-capsule-pill text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800">
+                        Medicamentos aplicados
+                    </h3>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm">
+                        <thead class="bg-gradient-to-r from-cyan-600 to-teal-600 text-white">
+                            <tr>
+                                <th class="px-6 py-4 text-left font-semibold">Medicamento</th>
+                                <th class="px-6 py-4 text-left font-semibold">Dosis</th>
+                                <th class="px-6 py-4 text-left font-semibold">Frecuencia</th>
+                                <th class="px-6 py-4 text-left font-semibold">Periodo</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="divide-y divide-gray-100 bg-white">
+                            @forelse ($consulta->medicamentosAplicados as $med)
+                                <tr class="hover:bg-cyan-50/60 transition">
+                                    <td class="px-6 py-4 text-gray-700">
+                                        {{ $med->medicamento }}
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-700">
+                                        {{ $med->dosis ?? '—' }}
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-700">
+                                        {{ $med->frecuencia ?? '—' }}
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-700">
+                                        {{ $med->periodo ?? '—' }}
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="px-6 py-10 text-center text-gray-500">
+                                        No se registraron medicamentos.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {{-- FIRMA --}}
+            <div class="bg-white rounded-2xl shadow-lg ring-1 ring-gray-200 p-6">
+                <div class="flex items-center gap-2 mb-5">
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center">
+                        <i class="bi bi-pen-fill text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800">
+                        Firma del propietario
+                    </h3>
+                </div>
+
+                <div class="flex flex-col items-center">
+                    @if($consulta->firma)
+                        <div class="bg-gray-50 border border-gray-200 rounded-2xl p-4 shadow-sm">
+                            <img
+                                src="{{ asset('storage/' . $consulta->firma) }}"
+                                class="border-2 border-gray-200 rounded-xl max-w-md bg-white p-3"
+                                alt="Firma del propietario"
+                            >
+                        </div>
+                    @else
+                        <div class="bg-gray-50 border border-gray-200 rounded-2xl px-6 py-10 text-center text-gray-500">
+                            <i class="bi bi-file-earmark-excel-fill text-3xl text-gray-300 block mb-2"></i>
+                            Sin firma registrada
+                        </div>
+                    @endif
+                </div>
+            </div>
+
         </div>
-
-
-
-        {{-- FIRMA --}}
-        <div class="bg-white rounded shadow p-5">
-            <h3 class="font-semibold mb-3">Firma del propietario</h3>
-
-            @if($consulta->firma)
-                <img
-                    src="{{ asset('storage/' . $consulta->firma) }}"
-                    class="border rounded max-w-md"
-                >
-            @else
-                <p class="text-gray-500">Sin firma registrada</p>
-            @endif
-        </div>
-
     </div>
 </x-app-layout>

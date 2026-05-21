@@ -214,6 +214,16 @@ class ConsultaController extends Controller
                 ]);
             }
 
+            $ultimo = Consulta::latest('id')->first();
+
+            if ($ultimo && $ultimo->expediente_num) {
+                $numero = intval(substr($ultimo->expediente_num, 4)) + 1;
+            } else {
+                $numero = 1;
+            }
+
+            $expediente = 'EXP-' . str_pad($numero, 3, '0', STR_PAD_LEFT);
+
             /* ==========================
             * 3️⃣ CONSULTA (SIEMPRE NUEVA)
             * ========================== */
@@ -223,7 +233,7 @@ class ConsultaController extends Controller
                 'fecha'          => $request->fecha,
                 'motivo'         => $request->motivo,
                 'veterinario'    => $request->veterinario,
-                'expediente_num' => uniqid('EXP-'),
+                'expediente_num' => $expediente,
                 'estatus'        => 'abierta',
             ]);
 

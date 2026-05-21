@@ -5,7 +5,6 @@
     );
 @endphp
 
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -13,46 +12,72 @@
     <title>Biometría Hemática</title>
 
     <style>
+        @page {
+            margin: 24px;
+        }
+
         body {
             font-family: DejaVu Sans, sans-serif;
             font-size: 12px;
             color: #111827;
+            line-height: 1.5;
         }
 
         .watermark {
-            position: absolute;
+            position: fixed;
             top: 45%;
             left: 50%;
             transform: translate(-50%, -50%);
-            opacity: 0.08;
+            opacity: 0.06;
             z-index: -1;
-            width: 400px;
+            width: 380px;
         }
 
         .header {
-            border-bottom: 2px solid #e5e7eb;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+            border-bottom: 2px solid #0f766e;
+            padding-bottom: 12px;
+            margin-bottom: 18px;
         }
 
         .clinic-info {
             text-align: right;
             font-size: 11px;
             color: #4b5563;
+            line-height: 1.4;
         }
 
         .title {
             text-align: center;
-            margin: 20px 0;
-            font-size: 16px;
+            margin: 18px 0 20px;
+            font-size: 18px;
             font-weight: bold;
+            letter-spacing: 0.5px;
+            color: #0f766e;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-top: -10px;
+            margin-bottom: 18px;
+            font-size: 11px;
+            color: #6b7280;
         }
 
         .card {
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 20px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 18px;
+            background: #ffffff;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: #0f172a;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #e5e7eb;
         }
 
         table {
@@ -60,27 +85,35 @@
             border-collapse: collapse;
         }
 
-        th {
-            background: #f3f4f6;
-            text-align: left;
-            padding: 8px;
-            font-size: 12px;
-            border-bottom: 1px solid #e5e7eb;
+        .info-table td {
+            padding: 6px 8px;
+            vertical-align: top;
         }
 
-        td {
-            padding: 8px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .footer {
-            margin-top: 40px;
-            border-top: 1px solid #e5e7eb;
-            padding-top: 10px;
-            font-size: 10px;
+        .info-label {
             color: #6b7280;
+            font-weight: bold;
+            width: 22%;
         }
 
+        .results-table th {
+            background: #0f766e;
+            color: #ffffff;
+            text-align: left;
+            padding: 9px 8px;
+            font-size: 11px;
+            border: 1px solid #0f766e;
+        }
+
+        .results-table td {
+            padding: 8px;
+            border: 1px solid #e5e7eb;
+            vertical-align: middle;
+        }
+
+        .results-table tr:nth-child(even) td {
+            background: #f9fafb;
+        }
 
         .resultado {
             text-align: center;
@@ -88,13 +121,43 @@
         }
 
         .ok {
-            color: #16a34a; /* verde */
+            color: #15803d;
         }
 
         .bad {
-            color: #dc2626; /* rojo */
+            color: #dc2626;
         }
 
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 9999px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .badge-ok {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-bad {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .footer {
+            margin-top: 24px;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 10px;
+            font-size: 10px;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        .footer strong {
+            color: #374151;
+        }
     </style>
 </head>
 <body>
@@ -103,104 +166,112 @@
     <img
         src="{{ public_path('images/logo.png') }}"
         class="watermark"
+        alt="Logo"
     >
 
     {{-- HEADER --}}
     <div class="header">
         <table>
             <tr>
-                <td width="20%">
-                    <img src="{{ public_path('images/logo.png') }}" height="60">
+                <td width="18%">
+                    <img src="{{ public_path('images/logo.png') }}" height="60" alt="Logo">
                 </td>
-
-                <td width="80%" class="clinic-info">
+                <td width="82%" class="clinic-info">
                     <strong>Clínica Veterinaria MINGA</strong><br>
                     MVZ Valeria Mingura Gamboa<br>
-                    CED. PROF. 12746833. UACJ<br>
-                   
+                    CED. PROF. 12746833. UACJ
                 </td>
             </tr>
         </table>
     </div>
 
     {{-- TÍTULO --}}
-    <div class="title">
-        BIOMETRÍA HEMÁTICA
-    </div>
+    <div class="title">BIOMETRÍA HEMÁTICA</div>
+    <div class="subtitle">Resultados hematológicos del paciente</div>
 
     {{-- DATOS DEL PACIENTE --}}
     <div class="card">
-        <table>
+        <div class="section-title">Datos del paciente</div>
+
+        <table class="info-table">
             <tr>
-                <td><strong>Mascota:</strong> {{ $biometrias->first()->paciente }}</td>
-                <td><strong>Especie:</strong> {{ $biometrias->first()->especie }}</td>
+                <td class="info-label">Mascota:</td>
+                <td>{{ $biometrias->first()->paciente }}</td>
+                <td class="info-label">Especie:</td>
+                <td>{{ $biometrias->first()->especie }}</td>
             </tr>
             <tr>
-                <td><strong>Veterinario:</strong> {{ $biometrias->first()->veterinario }}</td>
-                <td>
-                    <strong>Fecha:</strong>
-                    {{ \Carbon\Carbon::parse($biometrias->first()->fecha)->format('d/m/Y') }}
-                </td>
+                <td class="info-label">Veterinario:</td>
+                <td>{{ $biometrias->first()->veterinario }}</td>
+                <td class="info-label">Fecha:</td>
+                <td>{{ \Carbon\Carbon::parse($biometrias->first()->fecha)->format('d/m/Y') }}</td>
             </tr>
         </table>
     </div>
 
     {{-- RESULTADOS --}}
-    <div class="card table-wrapper">
+    <div class="card">
+        <div class="section-title">Resultados</div>
+
         <table class="results-table">
+            <thead>
+                <tr>
+                    <th width="40%">Parámetro</th>
+                    <th width="20%" style="text-align:center;">Resultado</th>
+                    <th width="20%" style="text-align:center;">Referencia</th>
+                    <th width="20%" style="text-align:center;">Estado</th>
+                </tr>
+            </thead>
 
-        <thead>
-            <tr>
-                <th>Parámetro</th>
-                <th style="text-align:center;">Resultado</th>
-                <th style="text-align:center;">Referencia</th>
-            </tr>
-        </thead>
+            <tbody>
+                @foreach ($biometrias as $item)
+                    @php
+                        $referencia = $esFelino
+                            ? $item->referencia_gato
+                            : $item->referencia_perro;
+                    @endphp
 
+                    <tr>
+                        <td>{{ $item->parametro }}</td>
 
-        <tbody>
-@foreach ($biometrias as $item)
-    @php
-        $referencia = $esFelino
-            ? $item->referencia_gato
-            : $item->referencia_perro;
-    @endphp
+                        <td class="resultado
+                            @if($item->esta_en_rango === true) ok
+                            @elseif($item->esta_en_rango === false) bad
+                            @endif
+                        ">
+                            {{ $item->resultado }}
+                        </td>
 
-    <tr>
-        <td>{{ $item->parametro }}</td>
+                        <td style="text-align:center;">
+                            {{ $referencia }}
+                        </td>
 
-        <td class="resultado
-            @if($item->esta_en_rango === true) ok
-            @elseif($item->esta_en_rango === false) bad
-            @endif
-        ">
-            {{ $item->resultado }}
-        </td>
-
-        <td style="text-align:center;">
-            {{ $referencia }}
-        </td>
-    </tr>
-@endforeach
-</tbody>
-
-      </table>
+                        <td style="text-align:center;">
+                            @if($item->esta_en_rango === true)
+                                <span class="badge badge-ok">Dentro de rango</span>
+                            @elseif($item->esta_en_rango === false)
+                                <span class="badge badge-bad">Fuera de rango</span>
+                            @else
+                                <span class="badge" style="background:#e5e7eb;color:#374151;">Sin validar</span>
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
 
     {{-- FOOTER --}}
     <div class="footer">
         <table>
             <tr>
-                <td>
-                    Clínica Veterinaria MINGA · Cuauhtémoc, Chihuahua<br>
-                    Av. José María Morelos y Pavón entre Centauro del Norte y Revolución Mexicana<br>
+                <td width="70%">
+                    <strong>Dirección:</strong> Av. José María Morelos y Pavón entre Centauro del Norte y Revolución Mexicana,
                     Emiliano Zapata, 31579 Cuauhtémoc, Chih.<br>
-                    Tel. 625 229 8478
-                    Documento generado el {{ now()->format('d/m/Y H:i') }}
+                    <strong>Documento generado:</strong> {{ now()->format('d/m/Y H:i') }}
                 </td>
-
-                <td style="text-align:right;">
-                    Tel. 625 229 8478
+                <td width="30%" style="text-align:right;">
+                    <strong>Tel.</strong> 625 229 8478
                 </td>
             </tr>
         </table>
