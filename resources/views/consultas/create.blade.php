@@ -640,19 +640,41 @@
                         >
                     </div>
 
-                    {{-- DOSIS --}}
+                   {{-- DOSIS --}}
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">
                             Dosis
                         </label>
 
-                        <input
-                            name="medicamentos[0][dosis]"
-                            type="text"
-                            placeholder="Ej. 5 ml"
-                            class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-gray-700
-                                focus:border-teal-500 focus:ring-4 focus:ring-teal-100 transition"
-                        >
+                        <div class="relative">
+                            <input
+                                id="dosisInput"
+                                name="medicamentos[0][dosis]"
+                                type="text"
+                                placeholder="Ej. 5 ml"
+                                class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 pr-14 text-gray-700
+                                    focus:border-teal-500 focus:ring-4 focus:ring-teal-100 transition"
+                            >
+
+                            {{-- Botón calculadora --}}
+                            <button
+                                type="button"
+                                onclick="openDoseModal(this.closest('.relative').querySelector('input'))"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-teal-600 transition"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    class="w-6 h-6"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor">
+
+                                    <path stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 7h6m-6 4h6m-6 4h2m4 0h2M7 3h10a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
 
                     {{-- FRECUENCIA --}}
@@ -792,254 +814,509 @@
                 Guardar consulta
             </button>
         </form>
+
+        {{-- MODAL CALCULADORA --}}
+            <div
+                id="doseModal"
+                class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50"
+            >
+                <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold text-gray-800">
+                            Calculadora de dosis
+                        </h2>
+
+                        <button
+                            type="button"
+                            onclick="closeDoseModal()"
+                            class="text-gray-400 hover:text-red-500"
+                        >
+                            ✕
+                        </button>
+                    </div>
+
+                    {{-- Equivalencia --}}
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Equivalencia por kg
+                        </label>
+
+                        <input
+                            id="equivalencia"
+                            type="number"
+                            step="0.01"
+                            placeholder="Ej. 0.2"
+                            class="w-full rounded-2xl border border-gray-200 px-4 py-3 focus:ring-4 focus:ring-teal-100"
+                        >
+
+                        <p class="text-xs text-gray-500 mt-1">
+                            Ejemplo: 0.2 ml por kg
+                        </p>
+                    </div>
+
+                    {{-- Peso --}}
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Peso de la mascota (kg)
+                        </label>
+
+                        <input
+                            id="pesoMascota"
+                            type="number"
+                            step="0.01"
+                            placeholder="Ej. 12"
+                            class="w-full rounded-2xl border border-gray-200 px-4 py-3 focus:ring-4 focus:ring-teal-100"
+                        >
+                    </div>
+
+                    {{-- Resultado --}}
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Resultado
+                        </label>
+
+                        <input
+                            id="resultadoDosis"
+                            type="text"
+                            readonly
+                            class="w-full rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3"
+                        >
+                    </div>
+
+                    {{-- Botones --}}
+                    <div class="flex justify-end gap-3">
+                        <button
+                            type="button"
+                            onclick="closeDoseModal()"
+                            class="px-4 py-2 rounded-xl border border-gray-200 hover:bg-gray-50"
+                        >
+                            Cancelar
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="calcularDosis()"
+                            class="px-5 py-2 rounded-xl bg-teal-600 text-white hover:bg-teal-700"
+                        >
+                            Calcular
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="aplicarDosis()"
+                            class="px-5 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700"
+                        >
+                            Aplicar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
         <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.5/dist/signature_pad.umd.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.5/dist/signature_pad.umd.min.js"></script>
 
-        <script>
-document.addEventListener('DOMContentLoaded', function () {
+       <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                // =========================
+                // ELEMENTOS PRINCIPALES
+                // =========================
+                const propietarioSelect = document.getElementById('propietario_select');
+                const mascotaSelect = document.getElementById('mascota_select');
+                const form = document.getElementById('consulta-form');
+                const canvas = document.getElementById('signature-pad');
 
-    const propietarioSelect = document.getElementById('propietario_select');
+                // =========================
+                // ESTADO GLOBAL
+                // =========================
+                let signaturePad = null;
+                let medicamentoIndex = 1;
+                let inputDosisActivo = null;
 
-    if (propietarioSelect) {
-        propietarioSelect.addEventListener('change', function () {
-            const option = this.options[this.selectedIndex];
-            document.getElementById('telefono').value = option?.dataset.telefono || '';
-            document.getElementById('correo').value = option?.dataset.correo || '';
-            document.getElementById('direccion').value = option?.dataset.direccion || '';
-        });
-    }
+                // =========================
+                // INICIALIZACIONES
+                // =========================
+                initPropietario();
+                initSignaturePad();
+                initMascota();
+                registerGlobalFunctions();
 
-    const canvas = document.getElementById('signature-pad');
-    let signaturePad = null;
+                // =========================
+                // PROPIETARIO
+                // =========================
+                function initPropietario() {
+                    if (!propietarioSelect) return;
 
-    if (canvas && typeof SignaturePad !== 'undefined') {
-        signaturePad = new SignaturePad(canvas);
+                    propietarioSelect.addEventListener('change', function () {
+                        const option = this.options[this.selectedIndex];
 
-        function resizeCanvas() {
-            const ratio = Math.max(window.devicePixelRatio || 1, 1);
-            canvas.width = canvas.offsetWidth * ratio;
-            canvas.height = canvas.offsetHeight * ratio;
-            canvas.getContext('2d').scale(ratio, ratio);
-        }
+                        setValueIfExists('telefono', option?.dataset.telefono || '');
+                        setValueIfExists('correo', option?.dataset.correo || '');
+                        setValueIfExists('direccion', option?.dataset.direccion || '');
+                    });
+                }
 
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+                // =========================
+                // FIRMA
+                // =========================
+                function initSignaturePad() {
+                    if (!canvas || typeof SignaturePad === 'undefined') return;
 
-        window.clearSignature = function () {
-            signaturePad.clear();
-        };
-    }
+                    signaturePad = new SignaturePad(canvas);
 
-    const form = document.getElementById('consulta-form');
-    if (form && signaturePad) {
-        form.addEventListener('submit', function () {
-            if (!signaturePad.isEmpty()) {
-                document.getElementById('firma').value = signaturePad.toDataURL('image/png');
-            }
-        });
-    }
+                    const resizeCanvas = () => {
+                        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                        canvas.width = canvas.offsetWidth * ratio;
+                        canvas.height = canvas.offsetHeight * ratio;
+                        canvas.getContext('2d').scale(ratio, ratio);
+                    };
 
-    let medicamentoIndex = 1;
+                    window.addEventListener('resize', resizeCanvas);
+                    resizeCanvas();
 
-    function crearInputMedicamento(nombre, placeholder) {
-        const div = document.createElement('div');
+                    window.clearSignature = function () {
+                        signaturePad.clear();
+                    };
 
-        const label = document.createElement('label');
-        label.className = 'block text-sm font-semibold text-gray-700 mb-2';
-        label.textContent = nombre;
+                    if (form) {
+                        form.addEventListener('submit', function () {
+                            if (!signaturePad.isEmpty()) {
+                                const firma = document.getElementById('firma');
+                                if (firma) {
+                                    firma.value = signaturePad.toDataURL('image/png');
+                                }
+                            }
+                        });
+                    }
+                }
 
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.name = nombre.toLowerCase() === 'medicamento'
-            ? `medicamentos[${medicamentoIndex}][medicamento]`
-            : nombre.toLowerCase() === 'dosis'
-                ? `medicamentos[${medicamentoIndex}][dosis]`
-                : nombre.toLowerCase() === 'periodo'
-                    ? `medicamentos[${medicamentoIndex}][periodo]`
-                    : '';
-        input.placeholder = placeholder;
-        input.className = 'w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-gray-700 focus:border-teal-500 focus:ring-4 focus:ring-teal-100 transition';
+                // =========================
+                // MASCOTAS
+                // =========================
+                function initMascota() {
+                    if (!mascotaSelect) return;
 
-        div.appendChild(label);
-        div.appendChild(input);
+                    if (propietarioSelect) {
+                        propietarioSelect.addEventListener('change', async function () {
+                            const option = this.options[this.selectedIndex];
 
-        return div;
-    }
+                            setValueIfExists('telefono', option?.dataset.telefono || '');
+                            setValueIfExists('correo', option?.dataset.correo || '');
+                            setValueIfExists('direccion', option?.dataset.direccion || '');
 
-    function crearSelectFrecuencia() {
-        const div = document.createElement('div');
+                            mascotaSelect.innerHTML = '<option value="">Cargando mascotas...</option>';
 
-        const label = document.createElement('label');
-        label.className = 'block text-sm font-semibold text-gray-700 mb-2';
-        label.textContent = 'Frecuencia';
+                            if (!this.value) {
+                                mascotaSelect.innerHTML = '<option value="">Selecciona una mascota</option>';
+                                limpiarDatosMascota();
+                                return;
+                            }
 
-        const select = document.createElement('select');
-        select.name = `medicamentos[${medicamentoIndex}][frecuencia]`;
-        select.className = 'w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-gray-700 focus:border-teal-500 focus:ring-4 focus:ring-teal-100 transition';
+                            try {
+                                const res = await fetch(`/propietarios/${this.value}/mascotas`);
+                                const mascotas = await res.json();
 
-        const options = [
-            ['', 'Selecciona una frecuencia'],
-            ['SID', 'SID'],
-            ['BID', 'BID'],
-            ['TID', 'TID'],
-            ['QID', 'QID'],
-            ['q24h', 'q24h'],
-            ['q12h', 'q12h'],
-            ['q8h', 'q8h'],
-            ['q6h', 'q6h'],
-            ['PRN', 'PRN'],
-        ];
+                                mascotaSelect.innerHTML = '<option value="">Selecciona una mascota</option>';
 
-        options.forEach(([value, text]) => {
-            const option = document.createElement('option');
-            option.value = value;
-            option.textContent = text;
-            select.appendChild(option);
-        });
+                                mascotas.forEach(mascota => {
+                                    const opt = document.createElement('option');
+                                    opt.value = mascota.id;
+                                    opt.textContent = mascota.nombre;
+                                    opt.dataset.especie = mascota.especie || '';
+                                    opt.dataset.raza = mascota.raza || '';
+                                    opt.dataset.edad = mascota.edad || '';
+                                    opt.dataset.peso = mascota.peso || '';
+                                    opt.dataset.esterilizado = mascota.esterilizado ? 1 : 0;
+                                    opt.dataset.imagen = mascota.imagen || '';
+                                    mascotaSelect.appendChild(opt);
+                                });
+                            } catch (error) {
+                                console.error(error);
+                                mascotaSelect.innerHTML = '<option value="">Error al cargar mascotas</option>';
+                            }
+                        });
+                    }
 
-        div.appendChild(label);
-        div.appendChild(select);
+                    mascotaSelect.addEventListener('change', function () {
+                        const option = this.options[this.selectedIndex];
 
-        return div;
-    }
+                        setValueIfExists('mascota_especie', option?.dataset.especie || '');
+                        setValueIfExists('mascota_raza', option?.dataset.raza || '');
+                        setValueIfExists('mascota_edad', option?.dataset.edad || '');
+                        setValueIfExists('mascota_peso', option?.dataset.peso || '');
 
-    window.agregarMedicamento = function () {
-        const container = document.getElementById('medicamentos-container');
-        if (!container) return;
+                        const esterilizado = document.getElementById('mascota_esterilizado');
+                        if (esterilizado) {
+                            esterilizado.checked = option?.dataset.esterilizado == 1;
+                        }
 
-        const item = document.createElement('div');
-        item.className = 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 medicamento-item border border-gray-100 rounded-3xl p-5 bg-gray-50/60 relative';
+                        const preview = document.getElementById('mascota-preview');
+                        if (!preview) return;
 
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'absolute top-3 right-3 text-red-500 hover:text-red-700 font-bold';
-        btn.textContent = '×';
-        btn.onclick = function () {
-            item.remove();
-        };
+                        if (option?.dataset.imagen) {
+                            preview.src = `/storage/${option.dataset.imagen}`;
+                            preview.classList.remove('hidden');
+                        } else {
+                            preview.src = '';
+                            preview.classList.add('hidden');
+                        }
+                    });
+                }
 
-        item.appendChild(btn);
-        item.appendChild(crearInputMedicamento('Medicamento', 'Ej. Amoxicilina'));
-        item.appendChild(crearInputMedicamento('Dosis', 'Ej. 5 ml'));
-        item.appendChild(crearSelectFrecuencia());
+                function limpiarDatosMascota() {
+                    setValueIfExists('mascota_especie', '');
+                    setValueIfExists('mascota_raza', '');
+                    setValueIfExists('mascota_edad', '');
+                    setValueIfExists('mascota_peso', '');
 
-        const periodoDiv = document.createElement('div');
-        const labelPeriodo = document.createElement('label');
-        labelPeriodo.className = 'block text-sm font-semibold text-gray-700 mb-2';
-        labelPeriodo.textContent = 'Periodo';
+                    const esterilizado = document.getElementById('mascota_esterilizado');
+                    if (esterilizado) {
+                        esterilizado.checked = false;
+                    }
 
-        const inputPeriodo = document.createElement('input');
-        inputPeriodo.type = 'text';
-        inputPeriodo.name = `medicamentos[${medicamentoIndex}][periodo]`;
-        inputPeriodo.placeholder = 'Ej. 7 días';
-        inputPeriodo.className = 'w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-gray-700 focus:border-teal-500 focus:ring-4 focus:ring-teal-100 transition';
+                    const preview = document.getElementById('mascota-preview');
+                    if (preview) {
+                        preview.src = '';
+                        preview.classList.add('hidden');
+                    }
+                }
 
-        periodoDiv.appendChild(labelPeriodo);
-        periodoDiv.appendChild(inputPeriodo);
-        item.appendChild(periodoDiv);
+                // =========================
+                // MEDICAMENTOS DINÁMICOS
+                // =========================
+                function crearInputMedicamento(tipo, placeholder) {
+                    const div = document.createElement('div');
 
-        container.appendChild(item);
-        medicamentoIndex++;
-    };
+                    const label = document.createElement('label');
+                    label.className = 'block text-sm font-semibold text-gray-700 mb-2';
+                    label.textContent = tipo === 'medicamento'
+                        ? 'Medicamento'
+                        : tipo === 'dosis'
+                            ? 'Dosis'
+                            : 'Periodo';
 
-    window.setCheck = function (key, value) {
-        const input = document.getElementById('input-' + key);
-        const btnNo = document.getElementById('btn-no-' + key);
-        const btnSi = document.getElementById('btn-si-' + key);
+                    if (tipo === 'dosis') {
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'relative';
 
-        if (!input || !btnNo || !btnSi) return;
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.name = `medicamentos[${medicamentoIndex}][dosis]`;
+                        input.placeholder = placeholder;
+                        input.className = 'w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 pr-14 text-gray-700 focus:border-teal-500 focus:ring-4 focus:ring-teal-100 transition';
 
-        input.value = value;
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-teal-600 transition';
+                        btn.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m-6 4h6m-6 4h2m4 0h2M7 3h10a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z" />
+                            </svg>
+                        `;
 
-        btnNo.classList.remove('bg-red-500', 'text-white');
-        btnSi.classList.remove('bg-teal-600', 'text-white');
+                        btn.addEventListener('click', () => {
+                            openDoseModal(input);
+                        });
 
-        if (value == 0) {
-            btnNo.classList.add('bg-red-500', 'text-white');
-        } else {
-            btnSi.classList.add('bg-teal-600', 'text-white');
-        }
-    };
+                        wrapper.appendChild(input);
+                        wrapper.appendChild(btn);
+                        div.appendChild(label);
+                        div.appendChild(wrapper);
+                        return div;
+                    }
 
-    const mascotaSelect = document.getElementById('mascota_select');
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.name = tipo === 'medicamento'
+                        ? `medicamentos[${medicamentoIndex}][medicamento]`
+                        : `medicamentos[${medicamentoIndex}][periodo]`;
+                    input.placeholder = placeholder;
+                    input.className = 'w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-gray-700 focus:border-teal-500 focus:ring-4 focus:ring-teal-100 transition';
 
-    function limpiarDatosMascota() {
-        document.querySelector('[name=mascota_especie]').value = '';
-        document.querySelector('[name=mascota_raza]').value = '';
-        document.querySelector('[name=mascota_edad]').value = '';
-        document.querySelector('[name=mascota_peso]').value = '';
-        document.getElementById('mascota_esterilizado').checked = false;
+                    div.appendChild(label);
+                    div.appendChild(input);
+                    return div;
+                }
 
-        const preview = document.getElementById('mascota-preview');
-        preview.src = '';
-        preview.classList.add('hidden');
-    }
+                function crearSelectFrecuencia() {
+                    const div = document.createElement('div');
 
-    if (propietarioSelect && mascotaSelect) {
-        propietarioSelect.addEventListener('change', async function () {
-            const option = this.options[this.selectedIndex];
+                    const label = document.createElement('label');
+                    label.className = 'block text-sm font-semibold text-gray-700 mb-2';
+                    label.textContent = 'Frecuencia';
 
-            document.getElementById('telefono').value = option?.dataset.telefono || '';
-            document.getElementById('correo').value = option?.dataset.correo || '';
-            document.getElementById('direccion').value = option?.dataset.direccion || '';
+                    const select = document.createElement('select');
+                    select.name = `medicamentos[${medicamentoIndex}][frecuencia]`;
+                    select.className = 'w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-gray-700 focus:border-teal-500 focus:ring-4 focus:ring-teal-100 transition';
 
-            mascotaSelect.innerHTML = '<option value="">Cargando mascotas...</option>';
+                    const options = [
+                        ['', 'Selecciona una frecuencia'],
+                        ['SID', 'SID'],
+                        ['BID', 'BID'],
+                        ['TID', 'TID'],
+                        ['QID', 'QID'],
+                        ['q24h', 'q24h'],
+                        ['q12h', 'q12h'],
+                        ['q8h', 'q8h'],
+                        ['q6h', 'q6h'],
+                        ['PRN', 'PRN'],
+                    ];
 
-            if (!this.value) {
-                mascotaSelect.innerHTML = '<option value="">Selecciona una mascota</option>';
-                limpiarDatosMascota();
-                return;
-            }
+                    options.forEach(([value, text]) => {
+                        const option = document.createElement('option');
+                        option.value = value;
+                        option.textContent = text;
+                        select.appendChild(option);
+                    });
 
-            try {
-                const res = await fetch(`/propietarios/${this.value}/mascotas`);
-                const mascotas = await res.json();
+                    div.appendChild(label);
+                    div.appendChild(select);
+                    return div;
+                }
 
-                mascotaSelect.innerHTML = '<option value="">Selecciona una mascota</option>';
+                function agregarMedicamento() {
+                    const container = document.getElementById('medicamentos-container');
+                    if (!container) return;
 
-                mascotas.forEach(mascota => {
-                    const opt = document.createElement('option');
-                    opt.value = mascota.id;
-                    opt.textContent = mascota.nombre;
-                    opt.dataset.especie = mascota.especie || '';
-                    opt.dataset.raza = mascota.raza || '';
-                    opt.dataset.edad = mascota.edad || '';
-                    opt.dataset.peso = mascota.peso || '';
-                    opt.dataset.esterilizado = mascota.esterilizado ? 1 : 0;
-                    opt.dataset.imagen = mascota.imagen || '';
-                    mascotaSelect.appendChild(opt);
-                });
-            } catch (error) {
-                console.error(error);
-                mascotaSelect.innerHTML = '<option value="">Error al cargar mascotas</option>';
-            }
-        });
-    }
+                    const item = document.createElement('div');
+                    item.className = 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 medicamento-item border border-gray-100 rounded-3xl p-5 bg-gray-50/60 relative';
 
-    if (mascotaSelect) {
-        mascotaSelect.addEventListener('change', function () {
-            const option = this.options[this.selectedIndex];
+                    const btnEliminar = document.createElement('button');
+                    btnEliminar.type = 'button';
+                    btnEliminar.className = 'absolute top-3 right-3 text-red-500 hover:text-red-700 font-bold';
+                    btnEliminar.textContent = '×';
+                    btnEliminar.addEventListener('click', () => item.remove());
 
-            document.querySelector('[name=mascota_especie]').value = option?.dataset.especie || '';
-            document.querySelector('[name=mascota_raza]').value = option?.dataset.raza || '';
-            document.querySelector('[name=mascota_edad]').value = option?.dataset.edad || '';
-            document.querySelector('[name=mascota_peso]').value = option?.dataset.peso || '';
-            document.getElementById('mascota_esterilizado').checked = option?.dataset.esterilizado == 1;
+                    item.appendChild(btnEliminar);
+                    item.appendChild(crearInputMedicamento('medicamento', 'Ej. Amoxicilina'));
+                    item.appendChild(crearInputMedicamento('dosis', 'Ej. 5 ml'));
+                    item.appendChild(crearSelectFrecuencia());
 
-            const preview = document.getElementById('mascota-preview');
+                    const periodoDiv = document.createElement('div');
+                    const labelPeriodo = document.createElement('label');
+                    labelPeriodo.className = 'block text-sm font-semibold text-gray-700 mb-2';
+                    labelPeriodo.textContent = 'Periodo';
 
-            if (option?.dataset.imagen) {
-                preview.src = `/storage/${option.dataset.imagen}`;
-                preview.classList.remove('hidden');
-            } else {
-                preview.src = '';
-                preview.classList.add('hidden');
-            }
-        });
-    }
+                    const inputPeriodo = document.createElement('input');
+                    inputPeriodo.type = 'text';
+                    inputPeriodo.name = `medicamentos[${medicamentoIndex}][periodo]`;
+                    inputPeriodo.placeholder = 'Ej. 7 días';
+                    inputPeriodo.className = 'w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-gray-700 focus:border-teal-500 focus:ring-4 focus:ring-teal-100 transition';
 
-});
-</script>
+                    periodoDiv.appendChild(labelPeriodo);
+                    periodoDiv.appendChild(inputPeriodo);
+                    item.appendChild(periodoDiv);
+
+                    container.appendChild(item);
+                    medicamentoIndex++;
+                }
+
+                // =========================
+                // CHECKS GENÉRICOS
+                // =========================
+                function setCheck(key, value) {
+                    const input = document.getElementById('input-' + key);
+                    const btnNo = document.getElementById('btn-no-' + key);
+                    const btnSi = document.getElementById('btn-si-' + key);
+
+                    if (!input || !btnNo || !btnSi) return;
+
+                    input.value = value;
+
+                    btnNo.classList.remove('bg-red-500', 'text-white');
+                    btnSi.classList.remove('bg-teal-600', 'text-white');
+
+                    if (value == 0) {
+                        btnNo.classList.add('bg-red-500', 'text-white');
+                    } else {
+                        btnSi.classList.add('bg-teal-600', 'text-white');
+                    }
+                }
+
+                // =========================
+                // MODAL DOSIS
+                // =========================
+                function openDoseModal(input = null) {
+                    if (input) {
+                        inputDosisActivo = input;
+                    }
+
+                    const modal = document.getElementById('doseModal');
+                    if (!modal) return;
+
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                }
+
+                function closeDoseModal() {
+                    const modal = document.getElementById('doseModal');
+                    if (!modal) return;
+
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }
+
+                function calcularDosis() {
+                    const equivalencia = parseFloat(document.getElementById('equivalencia')?.value);
+                    const peso = parseFloat(document.getElementById('pesoMascota')?.value);
+
+                    if (isNaN(equivalencia) || isNaN(peso)) {
+                        alert('Completa los campos correctamente');
+                        return;
+                    }
+
+                    const resultado = (equivalencia * peso).toFixed(2) + ' ml';
+                    const resultadoInput = document.getElementById('resultadoDosis');
+
+                    if (resultadoInput) {
+                        resultadoInput.value = resultado;
+                    }
+                }
+
+                function aplicarDosis() {
+                    const resultadoInput = document.getElementById('resultadoDosis');
+                    const resultado = resultadoInput?.value || '';
+
+                    if (!resultado) {
+                        alert('Primero calcula la dosis');
+                        return;
+                    }
+
+                    if (inputDosisActivo) {
+                        inputDosisActivo.value = resultado;
+                    }
+
+                    closeDoseModal();
+                }
+
+                // =========================
+                // EXPONER FUNCIONES GLOBALES
+                // =========================
+                function registerGlobalFunctions() {
+                    window.agregarMedicamento = agregarMedicamento;
+                    window.setCheck = setCheck;
+                    window.openDoseModal = openDoseModal;
+                    window.closeDoseModal = closeDoseModal;
+                    window.calcularDosis = calcularDosis;
+                    window.aplicarDosis = aplicarDosis;
+                }
+
+                // =========================
+                // HELPERS
+                // =========================
+               
+
+                function setValueIfExists(name, value) {
+                const el =
+                    document.getElementById(name) ||
+                    document.querySelector(`[name="${name}"]`);
+
+                if (el) {
+                    el.value = value;
+                }
+                }
+            });
+            </script>
 
     </div>
 </x-app-layout>

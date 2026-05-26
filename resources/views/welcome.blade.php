@@ -33,10 +33,10 @@
 
             <div class="flex items-center gap-4">
                <img
-                                    src="{{ asset('images/logo.png') }}"
-                                    alt="Logo"
-                                    class="h-9 w-auto"
-                                >
+                    src="{{ asset('images/logo.png') }}"
+                    alt="Logo"
+                    class="h-9 w-auto"
+                    >
 
                 <div>
                     <h1 class="text-2xl font-extrabold text-[#1f2937] leading-none">MINGA</h1>

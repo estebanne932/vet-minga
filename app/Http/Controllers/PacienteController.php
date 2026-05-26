@@ -53,7 +53,7 @@ class PacienteController extends Controller
             'mascota_nombre' => 'required|string|max:255',
             'mascota_especie' => 'nullable|string|max:255',
             'mascota_raza' => 'nullable|string|max:255',
-            'mascota_edad' => 'nullable|integer|min:0',
+            'mascota_edad' => 'nullable|string|max:255',
             'mascota_peso' => 'nullable|numeric|min:0',
         ]);
 
@@ -98,7 +98,7 @@ class PacienteController extends Controller
                 'nombre'         => $request->mascota_nombre,
                 'especie'        => $request->mascota_especie,
                 'raza'           => $request->mascota_raza,
-                'edad'           => (int) $request->mascota_edad,
+                'edad'           => $request->mascota_edad,
                 'peso'           => $request->mascota_peso,
                 'imagen'         => $imagenPath,
                 'esterilizado'   => $request->boolean('mascota_esterilizado'),
@@ -226,7 +226,7 @@ public function storeMascota(Request $request, Propietario $propietario)
         'mascota_nombre' => 'required|string|max:255',
         'mascota_especie' => 'nullable|string|max:255',
         'mascota_raza' => 'nullable|string|max:255',
-        'mascota_edad' => 'nullable|integer|min:0',
+        'mascota_edad' => 'nullable|string|max:255',
         'mascota_peso' => 'nullable|numeric|min:0',
         'mascota_imagen' => 'nullable|image',
         'mascota_esterilizado' => 'nullable|boolean',

@@ -95,7 +95,7 @@
                             Edad
                         </label>
                         <input
-                            type="number"
+                            type="text"
                             name="mascota_edad"
                             class="w-full rounded-xl border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 transition"
                             value="{{ old('mascota_edad') }}"
