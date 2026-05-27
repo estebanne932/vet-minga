@@ -36,4 +36,9 @@ class Mascota extends Model
         return $this->hasMany(Esterilizacion::class);
     }
 
+    public function eutanasias()
+    {
+        return $this->hasMany(Eutanasia::class);
+    }
+
 }

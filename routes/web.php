@@ -172,3 +172,32 @@ Route::post('/propietarios/{propietario}/mascotas',
     [PacienteController::class, 'storeMascota'])
     ->name('propietarios.mascotas.store');
 
+
+use App\Http\Controllers\EutanasiaController;
+
+Route::get('/eutanasias', [EutanasiaController::class, 'index'])
+    ->name('eutanasias.index');
+
+Route::get('/eutanasias/create', [EutanasiaController::class, 'create'])
+    ->name('eutanasias.create');
+
+Route::post('/eutanasias', [EutanasiaController::class, 'store'])
+    ->name('eutanasias.store');
+
+Route::get('/eutanasias/{eutanasia}/pdf', [EutanasiaController::class, 'pdf'])
+    ->name('eutanasias.pdf');
+
+Route::delete('/eutanasias/{eutanasia}', [EutanasiaController::class, 'destroy'])
+    ->name('eutanasias.destroy');
+
+Route::get('/eutanasias/buscar', [EutanasiaController::class, 'buscar'])
+    ->name('eutanasias.buscar');
+
+Route::get('/eutanasias/mascotas/{propietario}', [EutanasiaController::class, 'mascotas'])
+    ->name('eutanasias.mascotas');
+
+Route::get('/eutanasias/{eutanasia}', [EutanasiaController::class, 'show'])
+    ->name('eutanasias.show');
+
+Route::get('/eutanasias/create/{mascota}', [EutanasiaController::class, 'form'])
+    ->name('eutanasias.form');
