@@ -11,7 +11,7 @@
                         </div>
                         <div>
                             <h1 class="text-2xl font-bold text-white">
-                                Carta de Consentimiento de Esterilización
+                                Carta de Consentimiento de Cirugia
                             </h1>
                             <p class="text-sm text-cyan-100 mt-1">
                                 Documento generado
@@ -34,24 +34,7 @@
                         </div>
 
                         <div class="text-gray-700 text-justify leading-7 space-y-4">
-                            <p>
-                                Yo, <strong>{{ $esterilizacion->propietario->nombre }}</strong>,
-                                propietario(a) de la mascota <strong>{{ $esterilizacion->mascota->nombre }}</strong>,
-                                especie <strong>{{ $esterilizacion->mascota->especie }}</strong>,
-                                autorizo que sea sometida a cirugía de esterilización.
-                            </p>
-
-                            <p class="text-sm text-gray-600">
-                                La esterilización tiene como finalidad evitar nacimientos no deseados y contribuir al bienestar animal y la salud pública.
-                            </p>
-
-                            <p class="text-sm text-gray-600">
-                                Los dueños responsables evitan así el nacimiento de mascotas que tienen como destino deambular en la vía pública, además de sufrir hambre y malos tratos, además de representar riesgo a la salud pública por las agresiones que puedan ocasionar y la posible trasmisión de rabia.
-                            </p>
-
-                            <p class="text-sm text-gray-600">
-                                La esterilización de las hembras (OVH) consiste en retirar los dos ovarios y cuernos uterinos y en los machos se retiran los testículos, con lo cual ya no presentan celo.
-                            </p>
+                            
 
                             <p class="text-sm text-gray-600">
                                 El uso de anestesia general y procedimiento quirúrgico implica un riesgo, por lo cual la cirugía de esterilización se realiza a pacientes sanos, en esta campaña no se realizan exámenes preoperatorios, por lo que si su mascota presenta algún signo de enfermedad o sospecha que está embarazada notifíquelo al veterinario responsable del programa.
@@ -98,23 +81,23 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm">
                             <div class="bg-white rounded-xl p-4 border border-gray-200">
                                 <p class="text-gray-500 mb-1">Veterinario</p>
-                                <p class="font-semibold text-gray-800">{{ $esterilizacion->veterinario }}</p>
+                                <p class="font-semibold text-gray-800">{{ $cirugia->veterinario }}</p>
                             </div>
 
                             <div class="bg-white rounded-xl p-4 border border-gray-200">
                                 <p class="text-gray-500 mb-1">Tipo</p>
-                                <p class="font-semibold text-gray-800">{{ $esterilizacion->tipo }}</p>
+                                <p class="font-semibold text-gray-800">{{ $cirugia->tipo }}</p>
                             </div>
 
                             <div class="bg-white rounded-xl p-4 border border-gray-200">
                                 <p class="text-gray-500 mb-1">Peso</p>
-                                <p class="font-semibold text-gray-800">{{ $esterilizacion->peso }} kg</p>
+                                <p class="font-semibold text-gray-800">{{ $cirugia->peso }} kg</p>
                             </div>
 
                             <div class="bg-white rounded-xl p-4 border border-gray-200">
                                 <p class="text-gray-500 mb-1">Fecha</p>
                                 <p class="font-semibold text-gray-800">
-                                    {{ \Carbon\Carbon::parse($esterilizacion->fecha)->format('d/m/Y') }}
+                                    {{ \Carbon\Carbon::parse($cirugia->fecha)->format('d/m/Y') }}
                                 </p>
                             </div>
                         </div>
@@ -133,19 +116,17 @@
 
                         <div class="bg-white border border-gray-200 rounded-2xl p-6">
                             <div class="flex flex-col items-center">
-                                @if($esterilizacion->consentimiento_firmado)
+                                @if($cirugia->consentimiento_firmado)
                                     <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
                                         <img
-                                            src="{{ asset('storage/firmas/' . $esterilizacion->consentimiento_firmado) }}"
+                                            src="{{ asset('storage/firmas/' . $cirugia->consentimiento_firmado) }}"
                                             class="mx-auto h-32 object-contain"
                                             alt="Firma del propietario"
                                         >
                                     </div>
                                 @endif
 
-                                <p class="mt-4 font-semibold text-gray-800">
-                                    {{ $esterilizacion->propietario->nombre }}
-                                </p>
+                                 <p>Propietario ID: {{ $cirugia->propietario_id }}</p>
                                 <p class="text-sm text-gray-500">
                                     Firma registrada en el consentimiento
                                 </p>
@@ -156,7 +137,7 @@
                     {{-- BOTONES --}}
                     <div class="flex flex-col sm:flex-row justify-center gap-3 pt-2">
                         <a
-                            href="{{ route('esterilizaciones.pdf', $esterilizacion) }}"
+                            href="{{ route('cirugias.pdf', $cirugia) }}"
                             class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-emerald-600 text-white shadow-lg hover:bg-emerald-700 hover:scale-105 transition-all duration-200"
                         >
                             <i class="bi bi-file-earmark-pdf-fill"></i>
@@ -164,7 +145,7 @@
                         </a>
 
                         <a
-                            href="{{ route('esterilizaciones.index') }}"
+                            href="{{ route('cirugias.index') }}"
                             class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-gray-600 text-white shadow-lg hover:bg-gray-700 hover:scale-105 transition-all duration-200"
                         >
                             <i class="bi bi-arrow-left-circle-fill"></i>

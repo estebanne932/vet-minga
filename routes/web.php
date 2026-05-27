@@ -201,3 +201,33 @@ Route::get('/eutanasias/{eutanasia}', [EutanasiaController::class, 'show'])
 
 Route::get('/eutanasias/create/{mascota}', [EutanasiaController::class, 'form'])
     ->name('eutanasias.form');
+
+    
+use App\Http\Controllers\CirugiaController;
+
+Route::get('/cirugias', [CirugiaController::class, 'index'])
+    ->name('cirugias.index');
+
+Route::get('/cirugias/create', [CirugiaController::class, 'create'])
+    ->name('cirugias.create');
+
+Route::post('/cirugias', [CirugiaController::class, 'store'])
+    ->name('cirugias.store');
+
+Route::get('/cirugias/{cirugia}/pdf', [CirugiaController::class, 'pdf'])
+    ->name('cirugias.pdf');
+
+Route::delete('/cirugias/{cirugia}', [CirugiaController::class, 'destroy'])
+    ->name('cirugias.destroy');
+
+Route::get('/cirugias/buscar', [CirugiaController::class, 'buscar'])
+    ->name('cirugias.buscar');
+
+Route::get('/cirugias/mascotas/{propietario}', [CirugiaController::class, 'mascotas'])
+    ->name('cirugias.mascotas');
+
+Route::get('/cirugias/{cirugia}', [CirugiaController::class, 'show'])
+    ->name('cirugias.show');
+
+Route::get('/cirugias/create/{mascota}', [CirugiaController::class, 'form'])
+    ->name('cirugias.form');

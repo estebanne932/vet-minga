@@ -36,4 +36,9 @@ class Propietario extends Model
         return $this->hasMany(Eutanasia::class);
     }
 
+    public function cirugias()
+    {
+        return $this->hasMany(Cirugia::class);
+    }
+
 }
