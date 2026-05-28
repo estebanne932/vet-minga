@@ -64,5 +64,9 @@ class Consulta extends Model
         return $this->hasMany(Quimica::class);
     }
 
+    public function orinaExamenes()
+    {
+        return $this->hasMany(OrinaExamen::class, 'consulta_id');
+    }
 
 }

@@ -231,3 +231,30 @@ Route::get('/cirugias/{cirugia}', [CirugiaController::class, 'show'])
 
 Route::get('/cirugias/create/{mascota}', [CirugiaController::class, 'form'])
     ->name('cirugias.form');
+
+use App\Http\Controllers\OrinaExamenController;
+
+Route::get('examenes_orina/{consulta}/examenes', [OrinaExamenController::class, 'create'])
+    ->name('examenes.create');
+
+Route::post('examenes_orina/{consulta}/examenes', [OrinaExamenController::class, 'store'])
+    ->name('examenes.store');
+
+Route::get('examenes_orina/{consulta}/examenes/ver', [OrinaExamenController::class, 'show'])
+    ->name('examenes.show');
+
+Route::get('examenes_orina/{consulta}/examenes/editar', [OrinaExamenController::class, 'edit'])
+    ->name('examenes.edit');
+
+Route::delete('examenes_orina/{consulta}/examenes', [OrinaExamenController::class, 'destroy'])
+    ->name('examenes.destroy');
+
+Route::put(
+    'examenes_orina/{consulta}/examenes',
+    [OrinaExamenController::class, 'update']
+)->name('examenes.update');
+
+Route::get(
+    'examenes_orina/{consulta}/examenes/pdf',
+    [OrinaExamenController::class, 'pdf']
+)->name('examenes.pdf');

@@ -58,7 +58,8 @@ class ConsultaController extends Controller
             'propietario',
             'mascota',
             'examenFisico',        // texto
-            'examenFisicoCheck',   // si / no
+            'examenFisicoCheck',  
+            'orinaExamenes', // si / no
         ]);
 
         return view('consultas.show', compact('consulta'));

@@ -392,6 +392,81 @@
                 </div>
             </div>
 
+
+            {{-- EXAMEN DE ORINA --}}
+            <div class="bg-white rounded-2xl shadow-lg ring-1 ring-gray-200 p-6">
+                <div class="flex items-center gap-2 mb-5">
+                    <div class="w-10 h-10 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center">
+                        <i class="bi bi-droplet-half text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800">
+                        Examen de orina
+                    </h3>
+                </div>
+
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div>
+                        <p class="text-sm text-gray-700">
+                            Estado:
+                            @if(($consulta->orinaExamenes ?? collect())->isNotEmpty())
+                                <span class="ml-2 inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
+                                    Registrado
+                                </span>
+                            @else
+                                <span class="ml-2 inline-flex items-center px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold">
+                                    No registrado
+                                </span>
+                            @endif
+                        </p>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+                        @if(($consulta->orinaExamenes ?? collect())->isNotEmpty())
+                            <a
+                                href="{{ route('examenes.show', $consulta->id) }}"
+                                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-600 text-white shadow hover:bg-indigo-700 hover:scale-105 transition"
+                            >
+                                <i class="bi bi-eye-fill"></i>
+                                Ver
+                            </a>
+
+                            <a
+                                href="{{ route('examenes.edit', $consulta->id) }}"
+                                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-500 text-white shadow hover:bg-yellow-600 hover:scale-105 transition"
+                            >
+                                <i class="bi bi-pencil-square"></i>
+                                Editar
+                            </a>
+
+                            <form
+                                action="{{ route('examenes.destroy', $consulta->id) }}"
+                                method="POST"
+                                onsubmit="return confirm('¿Seguro que deseas eliminar el examen de orina?');"
+                            >
+                                @csrf
+                                @method('DELETE')
+
+                                <button
+                                    type="submit"
+                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-600 text-white shadow hover:bg-red-700 hover:scale-105 transition"
+                                >
+                                    <i class="bi bi-trash-fill"></i>
+                                    Eliminar
+                                </button>
+                            </form>
+                        @else
+                            <a
+                                href="{{ route('examenes.create', $consulta->id) }}"
+                                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-600 text-white shadow hover:bg-indigo-700 hover:scale-105 transition"
+                            >
+                                <i class="bi bi-plus-circle-fill"></i>
+                                Agregar examen
+                            </a>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
             {{-- DIAGNÓSTICO --}}
             <div class="bg-white rounded-2xl shadow-lg ring-1 ring-gray-200 p-6">
                 <div class="flex items-center gap-2 mb-5">
