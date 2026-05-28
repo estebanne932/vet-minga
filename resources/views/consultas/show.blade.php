@@ -576,6 +576,42 @@
                         </div>
                     @endif
                 </div>
+                @if($consulta->autorizacion_emergencia)
+
+    <div class="mt-6 bg-amber-50 border border-amber-200 rounded-2xl p-5">
+
+        <div class="flex items-start gap-3">
+
+            <div class="mt-1 text-amber-600">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    class="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+
+            <div>
+                <h4 class="text-sm font-semibold text-amber-800 mb-1">
+                    Autorización de emergencia aceptada
+                </h4>
+
+                <p class="text-sm text-amber-700 leading-relaxed">
+                    El propietario autorizó al médico veterinario responsable
+                    a tomar decisiones médicas y terapéuticas necesarias en caso
+                    de emergencia cuando no sea posible establecer comunicación.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+@endif
             </div>
 
         </div>

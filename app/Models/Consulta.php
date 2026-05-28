@@ -18,6 +18,7 @@ class Consulta extends Model
         'veterinario',
         'firma',
         'estatus',
+        'autorizacion_emergencia',
     ];
 
 

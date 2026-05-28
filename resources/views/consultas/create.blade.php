@@ -776,6 +776,68 @@
                 </button>
             </div>
 
+            {{-- AUTORIZACIÓN --}}
+            <div class="mb-6">
+
+                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+
+                    <div class="flex items-start gap-3">
+
+                        <div class="mt-1 text-amber-600">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="w-5 h-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z" />
+                            </svg>
+                        </div>
+
+                        <div class="flex-1">
+
+                            <h4 class="text-sm font-semibold text-amber-800 mb-2">
+                                Autorización médica en caso de emergencia
+                            </h4>
+
+                            <p class="text-sm text-amber-700 leading-relaxed">
+                                Autorizo al médico veterinario responsable y al personal de la clínica a tomar
+                                decisiones médicas, diagnósticas y terapéuticas necesarias para preservar la vida
+                                y bienestar de mi mascota en caso de emergencia, cuando no sea posible localizarme
+                                o establecer comunicación conmigo de manera oportuna.
+                            </p>
+
+                            <p class="text-sm text-amber-700 leading-relaxed mt-3">
+                                Entiendo que dichas decisiones serán tomadas bajo criterio profesional veterinario,
+                                buscando siempre el mejor beneficio para el paciente.
+                            </p>
+
+                            <label class="mt-4 flex items-start gap-3 cursor-pointer">
+
+                                <input
+                                    type="checkbox"
+                                    name="autorizacion_emergencia"
+                                    value="1"
+                                    required
+                                    class="mt-1 rounded border-gray-300 text-teal-600 shadow-sm focus:ring-teal-500"
+                                >
+
+                                <span class="text-sm text-gray-700 leading-relaxed">
+                                    He leído y acepto la autorización médica en caso de emergencia.
+                                </span>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
             {{-- CANVAS --}}
             <div class="relative">
 

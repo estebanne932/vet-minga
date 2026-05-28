@@ -236,6 +236,8 @@ class ConsultaController extends Controller
                 'veterinario'    => $request->veterinario,
                 'expediente_num' => $expediente,
                 'estatus'        => 'abierta',
+                'autorizacion_emergencia' =>
+                        $request->has('autorizacion_emergencia'),
             ]);
 
             /* ==========================
