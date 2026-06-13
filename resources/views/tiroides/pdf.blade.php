@@ -160,6 +160,11 @@
         .footer strong {
             color: #374151;
         }
+
+        .results-table th,
+.results-table td {
+    font-size: 10px;
+}
     </style>
 </head>
 <body>
@@ -302,6 +307,66 @@
         </table>
 
     </div>
+
+    {{-- TABLAS DE REFERENCIA --}}
+<div class="card">
+
+    <div class="section-title">
+        Valores de referencia
+    </div>
+    <table class="results-table" style="margin-bottom:20px;">
+        <thead>
+            <tr>
+                <th style="text-align:center;">Normal</th>
+                <th style="text-align:center;">Alto</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td style="text-align:center;">
+                    &lt;0.5 μU/ml
+                </td>
+
+                <td style="text-align:center;">
+                    &gt;0.5 μU/ml
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="results-table">
+        <thead>
+            <tr>
+                <th>Especie</th>
+                <th>Bajo</th>
+                <th>Bajo normal</th>
+                <th>Alto normal</th>
+                <th>Alto (hipertiroidismo)</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            <tr>
+                <td><strong>Canino</strong></td>
+                <td>&lt;1.0 μg/dL</td>
+                <td>1.0 – 2.0 μg/dL</td>
+                <td>1.0 – 4.0 μg/dL</td>
+                <td>&gt;4.0 μg/dL</td>
+            </tr>
+
+            <tr>
+                <td><strong>Felino</strong></td>
+                <td>&lt;0.8 μg/dL</td>
+                <td>0.8 – 4.7 μg/dL</td>
+                <td>2.3 – 4.7 μg/dL</td>
+                <td>&gt;4.7 μg/dL</td>
+            </tr>
+
+        </tbody>
+    </table>
+
+</div>
 
     <div class="footer">
 
