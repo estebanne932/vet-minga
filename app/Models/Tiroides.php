@@ -14,8 +14,6 @@ class Tiroides extends Model
         'especie',
         'veterinario',
         'fecha',
-        'color',
-        'aspecto',
         'parametro',
         'resultado',
         'referencia_perro',

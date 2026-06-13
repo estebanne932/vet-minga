@@ -14,7 +14,7 @@ class PerfiltiroideController extends Controller
     {
         $parametros = config('perfil_tiroide');
 
-        return view('examenes.create', [
+        return view('tiroides.create', [
             'consulta'   => $consulta,
             'parametros' => $parametros,
         ]);
@@ -26,15 +26,16 @@ class PerfiltiroideController extends Controller
 
             $config = config("perfil_tiroide.$key");
 
+            if (!$config) {
+                continue;
+            }
+
             Tiroides::create([
                 'consulta_id' => $consulta->id,
                 'paciente'    => $consulta->mascota->nombre,
                 'especie'     => $consulta->mascota->especie,
                 'veterinario' => $consulta->veterinario,
                 'fecha'       => now(),
-
-                'color'       => $request->color,
-                'aspecto'     => $request->aspecto,
 
                 'parametro'   => $config['label'],
                 'resultado'   => $resultado,
@@ -44,53 +45,56 @@ class PerfiltiroideController extends Controller
         }
 
         return redirect()
-            ->route('examenes.show', $consulta)
-            ->with('success', 'Perfil registrado correctamente');
+            ->route('tiroides.show', $consulta)
+            ->with('success', 'Perfil tiroideo registrado correctamente');
     }
 
     public function show(Consulta $consulta)
     {
-        $examenes = $consulta->perfilTiroides;
+        $perfil = $consulta->perfilTiroides;
 
-        if ($examenes->isEmpty()) {
+        if ($perfil->isEmpty()) {
             abort(404);
         }
 
-        return view('examenes.show', [
+        return view('tiroides.show', [
             'consulta' => $consulta,
-            'examenes' => $examenes,
+            'perfil'   => $perfil,
         ]);
     }
 
     public function edit(Consulta $consulta)
     {
         $parametros = config('perfil_tiroide');
-        $examenes = $consulta->perfilTiroides()->get();
+        $perfil = $consulta->perfilTiroides;
 
-        if ($examenes->isEmpty()) {
+        if ($perfil->isEmpty()) {
             abort(404);
         }
 
-        return view('examenes.edit', [
+        return view('tiroides.edit', [
             'consulta'   => $consulta,
             'parametros' => $parametros,
-            'examenes'   => $examenes,
+            'perfil'     => $perfil,
         ]);
     }
 
     public function update(Request $request, Consulta $consulta)
     {
         $request->validate([
-            'color' => ['nullable', 'string', 'max:255'],
-            'aspecto' => ['nullable', 'string', 'max:255'],
             'examen' => ['required', 'array'],
         ]);
 
         DB::transaction(function () use ($request, $consulta) {
+
             Tiroides::where('consulta_id', $consulta->id)->delete();
 
             foreach ($request->examen as $key => $dato) {
-                if (!isset($dato['resultado']) || $dato['resultado'] === '') {
+
+                if (
+                    !isset($dato['resultado']) ||
+                    $dato['resultado'] === ''
+                ) {
                     continue;
                 }
 
@@ -101,42 +105,42 @@ class PerfiltiroideController extends Controller
                 }
 
                 Tiroides::create([
-                    'consulta_id'       => $consulta->id,
-                    'paciente'          => $consulta->mascota->nombre,
-                    'especie'           => $consulta->mascota->especie,
-                    'veterinario'       => $consulta->veterinario,
-                    'fecha'             => now(),
-                    'color'             => $request->color,
-                    'aspecto'           => $request->aspecto,
-                    'parametro'         => $config['label'],
-                    'resultado'         => $dato['resultado'],
-                    'referencia_perro'  => $config['perro'],
-                    'referencia_gato'   => $config['gato'],
+                    'consulta_id' => $consulta->id,
+                    'paciente'    => $consulta->mascota->nombre,
+                    'especie'     => $consulta->mascota->especie,
+                    'veterinario' => $consulta->veterinario,
+                    'fecha'       => now(),
+
+                    'parametro'   => $config['label'],
+                    'resultado'   => $dato['resultado'],
+                    'referencia_perro' => $config['perro'],
+                    'referencia_gato'  => $config['gato'],
                 ]);
             }
         });
 
         return redirect()
-            ->route('examenes.show', $consulta->id)
-            ->with('success', 'Perfil de tiroide actualizado correctamente');
+            ->route('tiroides.show', $consulta->id)
+            ->with('success', 'Perfil tiroideo actualizado correctamente');
     }
 
     public function pdf(Consulta $consulta)
     {
-        $examenes = $consulta->perfilTiroides;
+        $perfil = $consulta->perfilTiroides;
 
-        if ($examenes->isEmpty()) {
+        if ($perfil->isEmpty()) {
             abort(404);
         }
 
-        $pdf = Pdf::loadView('examenes.pdf', [
+        $pdf = Pdf::loadView('tiroides.pdf', [
             'consulta' => $consulta,
-            'examenes' => $examenes,
+            'perfil'   => $perfil,
         ])->setPaper('A4', 'portrait');
 
-        return $pdf->stream('tiroides_' . $consulta->expediente_num . '.pdf');
+        return $pdf->stream(
+            'perfil_tiroideo_' . $consulta->expediente_num . '.pdf'
+        );
     }
-
 
     public function destroy(Consulta $consulta)
     {
@@ -144,7 +148,6 @@ class PerfiltiroideController extends Controller
 
         return redirect()
             ->route('consultas.show', $consulta->id)
-            ->with('success', 'Perfil tiroides eliminado correctamente');
+            ->with('success', 'Perfil tiroideo eliminado correctamente');
     }
-    
 }
