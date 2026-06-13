@@ -258,3 +258,40 @@ Route::get(
     'examenes_orina/{consulta}/examenes/pdf',
     [OrinaExamenController::class, 'pdf']
 )->name('examenes.pdf');
+
+use App\Http\Controllers\PerfiltiroideController;
+
+Route::get(
+    'perfil_tiroideo/{consulta}/perfil',
+    [PerfiltiroideController::class, 'create']
+)->name('tiroides.create');
+
+Route::post(
+    'perfil_tiroideo/{consulta}/perfil',
+    [PerfiltiroideController::class, 'store']
+)->name('tiroides.store');
+
+Route::get(
+    'perfil_tiroideo/{consulta}/perfil/ver',
+    [PerfiltiroideController::class, 'show']
+)->name('tiroides.show');
+
+Route::get(
+    'perfil_tiroideo/{consulta}/perfil/editar',
+    [PerfiltiroideController::class, 'edit']
+)->name('tiroides.edit');
+
+Route::put(
+    'perfil_tiroideo/{consulta}/perfil',
+    [PerfiltiroideController::class, 'update']
+)->name('tiroides.update');
+
+Route::delete(
+    'perfil_tiroideo/{consulta}/perfil',
+    [PerfiltiroideController::class, 'destroy']
+)->name('tiroides.destroy');
+
+Route::get(
+    'perfil_tiroideo/{consulta}/perfil/pdf',
+    [PerfiltiroideController::class, 'pdf']
+)->name('tiroides.pdf');

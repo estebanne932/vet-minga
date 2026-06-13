@@ -70,4 +70,9 @@ class Consulta extends Model
         return $this->hasMany(OrinaExamen::class, 'consulta_id');
     }
 
+    public function perfilTiroides()
+{
+    return $this->hasMany(Tiroides::class, 'consulta_id');
+}
+
 }
