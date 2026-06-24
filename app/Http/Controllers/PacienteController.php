@@ -18,8 +18,8 @@ class PacienteController extends Controller
     public function index()
     {
         $mascotas = Mascota::with('propietario')
-            ->latest()
-            ->paginate(10);
+            ->orderBy('nombre')
+            ->get();
 
         $propietarios = Propietario::withCount('mascotas')
             ->orderBy('nombre')

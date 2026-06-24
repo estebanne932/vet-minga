@@ -15,19 +15,20 @@ class MascotaController extends Controller
      * 📋 LISTADO
      */
     public function index()
-{
-    $mascotas = Mascota::with('propietario')
-        ->latest()
-        ->paginate(10);
+    {
+        $mascotas = Mascota::with('propietario')
+            ->orderBy('nombre')
+            ->get();
 
-    $propietarios = Propietario::latest()
-        ->paginate(10);
+        $propietarios = Propietario::withCount('mascotas')
+            ->orderBy('nombre')
+            ->get();
 
-    return view('pacientes.index', compact(
-        'mascotas',
-        'propietarios'
-    ));
-}
+        return view('pacientes.index', compact(
+            'mascotas',
+            'propietarios'
+        ));
+    }
 
     /**
      * ➕ FORM CREAR
