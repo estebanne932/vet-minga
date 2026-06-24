@@ -21,8 +21,9 @@ class PacienteController extends Controller
             ->latest()
             ->paginate(10);
 
-        $propietarios = Propietario::latest()
-            ->paginate(10);
+        $propietarios = Propietario::withCount('mascotas')
+            ->orderBy('nombre')
+            ->get();
 
         return view('pacientes.index', compact(
             'mascotas',
