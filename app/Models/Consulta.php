@@ -71,8 +71,14 @@ class Consulta extends Model
     }
 
     public function perfilTiroides()
-{
-    return $this->hasMany(Tiroides::class, 'consulta_id');
-}
+    {
+        return $this->hasMany(Tiroides::class, 'consulta_id');
+    }
+
+    public function radiografias()
+    {
+        return $this->hasMany(Radiografia::class);
+    }
+
 
 }

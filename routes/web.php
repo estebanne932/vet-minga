@@ -295,3 +295,15 @@ Route::get(
     'perfil_tiroideo/{consulta}/perfil/pdf',
     [PerfiltiroideController::class, 'pdf']
 )->name('tiroides.pdf');
+
+use App\Http\Controllers\RadiografiaController;
+
+Route::post(
+    '/consultas/{consulta}/radiografias',
+    [RadiografiaController::class, 'store']
+)->name('radiografias.store');
+
+Route::delete(
+    '/radiografias/{radiografia}',
+    [RadiografiaController::class, 'destroy']
+)->name('radiografias.destroy');

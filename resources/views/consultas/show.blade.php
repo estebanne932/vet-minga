@@ -551,6 +551,99 @@
                 </div>
             </div>
 
+            {{-- RADIOGRAFÍAS --}}
+<div class="bg-white rounded-2xl shadow-lg ring-1 ring-gray-200 p-6">
+
+    <div class="flex items-center justify-between mb-5">
+        <div class="flex items-center gap-2">
+            <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center">
+                <i class="bi bi-image-fill text-lg"></i>
+            </div>
+
+            <h3 class="text-lg font-semibold text-gray-800">
+                Radiografías
+            </h3>
+        </div>
+
+        <form
+            action="{{ route('radiografias.store',$consulta->id) }}"
+            method="POST"
+            enctype="multipart/form-data"
+        >
+            @csrf
+
+            <input
+                type="file"
+                name="imagenes[]"
+                multiple
+                accept="image/*"
+                onchange="this.form.submit()"
+                class="hidden"
+                id="radiografias_{{ $consulta->id }}"
+            >
+
+            <label
+                for="radiografias_{{ $consulta->id }}"
+                class="cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-600 text-white shadow hover:bg-indigo-700"
+            >
+                <i class="bi bi-plus-circle-fill"></i>
+                Adjuntar
+            </label>
+
+        </form>
+    </div>
+
+    @if($consulta->radiografias->isNotEmpty())
+
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+
+            @foreach($consulta->radiografias as $radiografia)
+
+                <div class="relative group">
+
+                    <a
+                        href="{{ asset('storage/'.$radiografia->imagen) }}"
+                        target="_blank"
+                    >
+                        <img
+                            src="{{ asset('storage/'.$radiografia->imagen) }}"
+                            class="w-full h-32 object-cover rounded-xl border"
+                        >
+                    </a>
+
+                    <form
+                        action="{{ route('radiografias.destroy',$radiografia->id) }}"
+                        method="POST"
+                        class="absolute top-2 right-2"
+                    >
+                        @csrf
+                        @method('DELETE')
+
+                        <button
+                            type="submit"
+                            onclick="return confirm('¿Eliminar radiografía?')"
+                            class="bg-red-600 text-white rounded-full w-8 h-8"
+                        >
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+
+                </div>
+
+            @endforeach
+
+        </div>
+
+    @else
+
+        <div class="text-center py-8 text-gray-500">
+            No hay radiografías registradas
+        </div>
+
+    @endif
+
+</div>
+
             {{-- DIAGNÓSTICO --}}
             <div class="bg-white rounded-2xl shadow-lg ring-1 ring-gray-200 p-6">
                 <div class="flex items-center gap-2 mb-5">
