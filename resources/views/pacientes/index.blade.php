@@ -38,23 +38,47 @@
 
                     <div class="propietario-card border rounded-xl p-4 hover:bg-teal-50 cursor-pointer transition" data-nombre="{{ strtolower($propietario->nombre) }}">
 
-                        <div class="flex justify-between items-start">
+                       <div class="flex justify-between items-start">
 
-                            <div>
-                                <h4 class="font-semibold text-gray-800">
-                                    {{ $propietario->nombre }}
-                                </h4>
+    <div>
 
-                                <p class="text-sm text-gray-500">
-                                    {{ $propietario->telefono }}
-                                </p>
-                            </div>
+        <h4 class="font-semibold text-gray-800">
+            {{ $propietario->nombre }}
+        </h4>
 
-                            <span class="bg-teal-100 text-teal-700 text-xs px-3 py-1 rounded-full">
-                                {{ $propietario->mascotas->count() }}
-                            </span>
+        <p class="text-sm text-gray-500">
+            {{ $propietario->telefono }}
+        </p>
 
-                        </div>
+        <div class="flex gap-2 mt-3">
+
+            {{-- EDITAR PROPIETARIO --}}
+            <a
+                href="{{ route('propietarios.edit', $propietario->id) }}"
+                class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-600 hover:text-white transition"
+                title="Editar propietario"
+            >
+                <i class="bi bi-pencil-fill"></i>
+            </a>
+
+            {{-- AGREGAR MASCOTA --}}
+            <a
+                href="{{ route('propietarios.mascotas.create', $propietario->id) }}"
+                class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white transition"
+                title="Agregar mascota"
+            >
+                <i class="bi bi-plus-lg"></i>
+            </a>
+
+        </div>
+
+    </div>
+
+    <span class="bg-teal-100 text-teal-700 text-xs px-3 py-1 rounded-full">
+        {{ $propietario->mascotas->count() }}
+    </span>
+
+</div>
 
                     </div>
 
